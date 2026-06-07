@@ -5,453 +5,200 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jábega · Análisis de Regatas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --sea: #1a6b8a;
-    --sea-mid: #2389ab;
-    --sea-light: #4baec8;
-    --sea-pale: #e6f4f8;
-    --sand: #fdf6ed;
-    --gold: #c89a2e;
-    --gold-light: #e8b84b;
-    --coral: #c94f3a;
-    --green: #1d8a5e;
-    --amber: #b07010;
-    --bg: #f0f7fa;
-    --bg2: #e4f0f5;
-    --white: #ffffff;
-    --text: #1a2e3a;
-    --text2: #4a6270;
-    --text3: #8aabb8;
-    --border: rgba(26,107,138,0.13);
-    --radius: 14px;
-    --shadow: 0 2px 16px rgba(26,107,138,0.10);
-  }
+:root {
+  --sea:#1a6b8a; --sea-mid:#2389ab; --sea-light:#4baec8; --sea-pale:#e6f4f8;
+  --gold:#c89a2e; --gold-light:#e8b84b;
+  --green:#1d8a5e; --amber:#b07010; --coral:#993C1D; --purple:#7b52a8;
+  --bg:#f0f7fa; --bg2:#e4f0f5; --white:#ffffff;
+  --text:#1a2e3a; --text2:#4a6270; --text3:#8aabb8;
+  --border:rgba(26,107,138,0.13); --radius:14px;
+  --shadow:0 2px 16px rgba(26,107,138,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';display:block;height:5px;background:linear-gradient(90deg,var(--sea),var(--sea-light),var(--gold-light))}
+.app{max-width:1080px;margin:0 auto;padding:0 20px 60px}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.club-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--sea-mid);text-transform:uppercase;margin-bottom:6px}
+h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(22px,4vw,36px);color:var(--text);line-height:1.1;letter-spacing:-.02em}
+h1 span{color:var(--sea)}
+.header-meta{font-size:12px;color:var(--text2);margin-top:6px;display:flex;gap:14px;flex-wrap:wrap}
+.header-meta b{color:var(--text);font-weight:500}
+.badge{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;padding:7px 18px;border-radius:100px;letter-spacing:.04em;box-shadow:0 4px 14px rgba(200,154,46,0.35);white-space:nowrap;align-self:flex-start}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+/* RACE SELECTOR */
+.race-selector{display:flex;gap:8px;flex-wrap:wrap}
+.race-btn{padding:8px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s}
+.race-btn:hover{border-color:var(--sea);color:var(--sea)}
+.race-btn.active{background:var(--sea);color:white;border-color:var(--sea);box-shadow:0 2px 10px rgba(26,107,138,0.25)}
+.race-btn .race-btn-date{font-size:10px;font-family:'DM Mono',monospace;opacity:.7;display:block;margin-top:1px}
 
-  /* Top accent bar */
-  body::before {
-    content: '';
-    display: block;
-    height: 5px;
-    background: linear-gradient(90deg, var(--sea) 0%, var(--sea-light) 50%, var(--gold-light) 100%);
-  }
+/* NAV TABS */
+.nav-tabs{display:flex;gap:2px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:22px;width:fit-content;flex-wrap:wrap}
+.tab-btn{padding:7px 16px;border-radius:8px;border:none;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap}
+.tab-btn:hover{color:var(--sea)}
+.tab-btn.active{background:var(--white);color:var(--sea);box-shadow:0 1px 6px rgba(26,107,138,0.12)}
 
-  .app {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 20px 60px;
-  }
+/* PANELS */
+.panel{display:none;animation:fadeUp .25s ease}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
-  /* ─── HEADER ─── */
-  header {
-    padding: 32px 0 24px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-  }
-  .club-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: .18em;
-    color: var(--sea-mid);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(24px, 4vw, 38px);
-    color: var(--text);
-    line-height: 1.1;
-    letter-spacing: -.02em;
-  }
-  h1 span { color: var(--sea); }
-  .header-meta {
-    font-size: 12.5px;
-    color: var(--text2);
-    margin-top: 8px;
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .header-meta b { color: var(--text); font-weight: 500; }
+/* CARDS */
+.card{background:var(--white);border-radius:var(--radius);padding:22px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.sec-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+.mb16{margin-bottom:16px}
+.mt16{margin-top:16px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
 
-  .badge-3rd {
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 13px;
-    padding: 8px 20px;
-    border-radius: 100px;
-    letter-spacing: .04em;
-    box-shadow: 0 4px 14px rgba(200,154,46,0.35);
-    align-self: flex-start;
-  }
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-bottom:18px}
+.stat-card{background:var(--sea-pale);border:1px solid rgba(26,107,138,0.1);border-radius:10px;padding:14px 16px}
+.stat-card.accent{background:var(--sea)}
+.stat-card.accent .stat-lbl,.stat-card.accent .stat-unit{color:rgba(255,255,255,0.65)}
+.stat-card.accent .stat-val{color:white}
+.stat-card.gold-c{background:linear-gradient(135deg,#7a5a10,#b88a28)}
+.stat-card.gold-c .stat-lbl,.stat-card.gold-c .stat-unit,.stat-card.gold-c .stat-val{color:white}
+.stat-lbl{font-size:11px;color:var(--text3);margin-bottom:3px}
+.stat-val{font-family:'Syne',sans-serif;font-weight:700;font-size:24px;color:var(--sea);line-height:1}
+.stat-unit{font-size:11px;color:var(--text3);margin-top:2px}
 
-  /* ─── NAV ─── */
-  .nav-tabs {
-    display: flex;
-    gap: 2px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 3px;
-    margin-bottom: 24px;
-    width: fit-content;
-    flex-wrap: wrap;
-  }
-  .tab-btn {
-    padding: 7px 18px;
-    border-radius: 8px;
-    border: none;
-    background: transparent;
-    color: var(--text2);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all .18s;
-    white-space: nowrap;
-  }
-  .tab-btn:hover { color: var(--sea); }
-  .tab-btn.active {
-    background: var(--white);
-    color: var(--sea);
-    box-shadow: 0 1px 6px rgba(26,107,138,0.12);
-  }
+/* PHASE BAR */
+.phase-bar{display:flex;height:42px;border-radius:9px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 8px rgba(0,0,0,0.07)}
+.ph{display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);cursor:default;gap:1px}
+.ph-sub{font-size:9px;opacity:.7;font-weight:400}
+.ph-ida{background:#185FA5}.ph-dev{background:#1D9E75}.ph-ciab{background:#7b52a8}.ph-reac{background:#0f7a8a}.ph-sprint{background:#993C1D}
+.phase-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--text2)}
+.phase-legend span{display:flex;align-items:center;gap:5px}
+.pl-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 
-  /* ─── PANEL ─── */
-  .panel { display: none; animation: fadeUp .25s ease; }
-  .panel.active { display: block; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+/* CHART */
+.chart-area{background:var(--sea-pale);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
 
-  /* ─── CARD ─── */
-  .card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 22px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-  }
-  .sec-lbl {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 14px;
-  }
+/* CIABOGA */
+.ciab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+.ciab-metric{background:linear-gradient(135deg,#f3eeff,#ece4ff);border:1px solid rgba(123,82,168,0.2);border-radius:10px;padding:14px 16px}
+.ciab-metric .stat-lbl{color:#7b52a8}.ciab-metric .stat-val{color:#5a3a88;font-size:20px}.ciab-metric .stat-unit{color:rgba(91,58,136,0.6)}
+.ciab-step{display:flex;gap:14px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--border)}
+.ciab-step:last-child{border-bottom:none}
+.ciab-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#7b52a8;width:40px;flex-shrink:0;padding-top:2px}
+.ciab-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ciab-text{font-size:12.5px;color:var(--text2);line-height:1.55}
+.ciab-text b{color:var(--text);font-weight:500}
 
-  /* ─── STAT GRID ─── */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .stat-card {
-    background: var(--sea-pale);
-    border: 1px solid rgba(26,107,138,0.1);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .stat-card.accent { background: var(--sea); }
-  .stat-card.accent .stat-lbl,
-  .stat-card.accent .stat-unit { color: rgba(255,255,255,0.65); }
-  .stat-card.accent .stat-val { color: white; }
-  .stat-card.gold-c { background: linear-gradient(135deg,#7a5a10,#b88a28); }
-  .stat-card.gold-c .stat-lbl,
-  .stat-card.gold-c .stat-unit { color: rgba(255,255,255,0.65); }
-  .stat-card.gold-c .stat-val { color: white; }
-  .stat-lbl { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
-  .stat-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 26px; color: var(--sea); line-height: 1; }
-  .stat-unit { font-size: 11px; color: var(--text3); margin-top: 2px; }
+/* ROWERS */
+.rower-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.rower-card{background:var(--white);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s}
+.rower-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,107,138,0.14)}
+.rower-header{padding:13px 16px 11px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--border)}
+.rower-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:white;flex-shrink:0}
+.av-babor{background:linear-gradient(135deg,#185FA5,#378ADD)}
+.av-estribor{background:linear-gradient(135deg,#1D8A5E,#3BB87A)}
+.av-patron{background:linear-gradient(135deg,#9a6a10,#d4a030)}
+.rower-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+.rower-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.band-badge{margin-left:auto;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.06em;padding:3px 8px;border-radius:20px;font-weight:500}
+.bb-babor{background:#E6F1FB;color:#185FA5}
+.bb-estribor{background:#E1F5EE;color:#0F6E56}
+.bb-patron{background:#FAEEDA;color:#854F0B}
+.rower-body{padding:13px 16px 16px}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.score-label{font-size:11.5px;color:var(--text2);width:88px;flex-shrink:0}
+.score-bg{flex:1;height:5px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.fg{background:linear-gradient(90deg,#1D8A5E,#5DCAA5)}
+.fa{background:linear-gradient(90deg,#BA7517,#EF9F27)}
+.fr{background:linear-gradient(90deg,#993C1D,#D85A30)}
+.fb{background:linear-gradient(90deg,#185FA5,#378ADD)}
+.fp{background:linear-gradient(90deg,#6b3a9a,#a06ed4)}
+.score-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:28px;text-align:right}
+.phase-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.chip{font-size:10px;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace}
+.chip-g{background:#E1F5EE;color:#0F6E56}
+.chip-a{background:#FAEEDA;color:#854F0B}
+.chip-r{background:#FAECE7;color:#993C1D}
+.chip-p{background:#f0eaff;color:#6b3a9a}
+.note-box{margin-top:11px;padding:9px 11px;background:var(--sea-pale);border-radius:8px;border-left:3px solid var(--sea)}
+.note-ttl{font-size:10px;font-weight:500;color:var(--sea);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.note-txt{font-size:12px;color:var(--text2);line-height:1.6}
+.priority-box{margin-top:7px;padding:9px 11px;background:#f3eeff;border-radius:8px;border-left:3px solid #7b52a8}
+.priority-box .note-ttl{color:#7b52a8}
 
-  /* ─── PHASE BAR ─── */
-  .phase-bar {
-    display: flex; height: 44px;
-    border-radius: 9px; overflow: hidden;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 8px rgba(0,0,0,0.07);
-  }
-  .ph {
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; font-size: 11px; font-weight: 600;
-    color: rgba(255,255,255,0.95); cursor: default; gap: 1px;
-  }
-  .ph-sub { font-size: 9px; opacity: .7; font-weight: 400; }
-  .ph-ida    { background: #185FA5; flex: 13; }
-  .ph-dev    { background: #1D9E75; flex: 25; }
-  .ph-ciab   { background: #7b52a8; flex: 15; }
-  .ph-reac   { background: #0f7a8a; flex: 14; }
-  .ph-sprint { background: #993C1D; flex: 33; }
-  .phase-legend {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    font-size: 12px; color: var(--text2);
-  }
-  .phase-legend span { display: flex; align-items: center; gap: 5px; }
-  .pl-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+/* EVOL badge on rower card */
+.evol-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:10px;font-family:'DM Mono',monospace;margin-top:6px}
+.evol-up{background:#e1f5ee;color:#0f6e56}
+.evol-down{background:#faece7;color:#993c1d}
+.evol-same{background:var(--sea-pale);color:var(--sea)}
+.evol-new{background:#faeeda;color:#854f0b}
 
-  /* ─── CHART AREA ─── */
-  .chart-area {
-    background: var(--sea-pale);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 14px;
-  }
+/* MEJORAS */
+.mej-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:18px}
+.mej-card{background:var(--white);border-radius:var(--radius);padding:17px 19px;border:1px solid var(--border);border-left:4px solid;box-shadow:var(--shadow)}
+.mej-card.pos{border-left-color:#1D8A5E}
+.mej-card.neg{border-left-color:#D85A30}
+.mej-card.tip{border-left-color:#185FA5}
+.mej-card.cib{border-left-color:#7b52a8}
+.mej-icon{font-size:19px;margin-bottom:7px}
+.mej-ttl{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;margin-bottom:6px}
+.mej-txt{font-size:12.5px;color:var(--text2);line-height:1.65}
 
-  /* ─── CIABOGA SECTION ─── */
-  .ciab-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .ciab-metric {
-    background: linear-gradient(135deg, #f3eeff, #ece4ff);
-    border: 1px solid rgba(123,82,168,0.2);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .ciab-metric .stat-lbl { color: #7b52a8; }
-  .ciab-metric .stat-val { color: #5a3a88; font-size: 22px; }
-  .ciab-metric .stat-unit { color: rgba(91,58,136,0.6); }
+/* HISTÓRICO */
+.hist-card{background:var(--white);border-radius:var(--radius);padding:22px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:16px}
+.week-row{display:flex;align-items:center;gap:12px;padding:10px 8px;border-bottom:1px solid var(--border);border-radius:8px;transition:background .15s}
+.week-row:last-child{border-bottom:none}
+.week-row:hover{background:var(--sea-pale)}
+.week-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);width:50px}
+.week-date{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.week-pos{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+.pos-1{color:#c89a2e}.pos-2{color:#888}.pos-3{color:#a06030}.pos-other{color:var(--sea)}
+.week-cadencia{font-family:'DM Mono',monospace;font-size:11px;background:var(--sea-pale);padding:3px 9px;border-radius:20px;color:var(--sea)}
+.week-trend{font-size:13px}
+.msel{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text2);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.msel:hover{border-color:var(--sea);color:var(--sea)}
+.msel.active{background:var(--sea);color:white;border-color:var(--sea)}
+.hito-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.hito-row:last-child{border-bottom:none}
+.hito-icon{font-size:15px;flex-shrink:0}
+.hito-label{flex:1;color:var(--text2)}
+.hito-vals{font-family:'DM Mono',monospace;font-size:12px;display:flex;gap:8px;align-items:center}
+.hito-ok{color:#1d8a5e;font-weight:500}
+.hito-nog{color:#b07010;font-weight:500}
+.hito-badge{font-size:10px;padding:2px 7px;border-radius:10px}
+.badge-ok{background:#e1f5ee;color:#0f6e56}
+.badge-prog{background:#faeeda;color:#854f0b}
 
-  .ciab-timeline {
-    position: relative;
-    background: var(--sea-pale);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-  .ciab-step {
-    display: flex; gap: 14px; align-items: flex-start;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--border);
-  }
-  .ciab-step:last-child { border-bottom: none; }
-  .ciab-time {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; font-weight: 500;
-    color: #7b52a8; width: 42px; flex-shrink: 0;
-    padding-top: 2px;
-  }
-  .ciab-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    flex-shrink: 0; margin-top: 4px;
-  }
-  .ciab-text { font-size: 13px; color: var(--text2); line-height: 1.55; }
-  .ciab-text b { color: var(--text); font-weight: 500; }
-
-  /* ─── ROWERS ─── */
-  .rower-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 14px;
-  }
-  .rower-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    transition: transform .18s, box-shadow .18s;
-  }
-  .rower-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(26,107,138,0.14);
-  }
-  .rower-header {
-    padding: 14px 18px 12px;
-    display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .rower-avatar {
-    width: 42px; height: 42px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px;
-    color: white; flex-shrink: 0;
-  }
-  .av-babor    { background: linear-gradient(135deg,#185FA5,#378ADD); }
-  .av-estribor { background: linear-gradient(135deg,#1D8A5E,#3BB87A); }
-  .av-patron   { background: linear-gradient(135deg,#9a6a10,#d4a030); }
-  .rower-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
-  .rower-sub  { font-size: 11.5px; color: var(--text3); margin-top: 1px; }
-  .band-badge {
-    margin-left: auto;
-    font-size: 10px; font-family: 'DM Mono', monospace;
-    letter-spacing: .06em; padding: 3px 9px;
-    border-radius: 20px; font-weight: 500;
-  }
-  .bb-babor    { background: #E6F1FB; color: #185FA5; }
-  .bb-estribor { background: #E1F5EE; color: #0F6E56; }
-  .bb-patron   { background: #FAEEDA; color: #854F0B; }
-
-  .rower-body { padding: 14px 18px 18px; }
-  .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .score-label { font-size: 12px; color: var(--text2); width: 90px; flex-shrink: 0; }
-  .score-bg { flex: 1; height: 5px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
-  .score-fill { height: 100%; border-radius: 3px; transition: width .7s cubic-bezier(.4,0,.2,1); }
-  .fg { background: linear-gradient(90deg,#1D8A5E,#5DCAA5); }
-  .fa { background: linear-gradient(90deg,#BA7517,#EF9F27); }
-  .fr { background: linear-gradient(90deg,#993C1D,#D85A30); }
-  .fb { background: linear-gradient(90deg,#185FA5,#378ADD); }
-  .fp { background: linear-gradient(90deg,#6b3a9a,#a06ed4); }
-  .score-pct { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3); width:28px; text-align:right; }
-
-  .phase-chips { display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
-  .chip { font-size:10px; padding:2px 8px; border-radius:20px; font-family:'DM Mono',monospace; }
-  .chip-g { background:#E1F5EE; color:#0F6E56; }
-  .chip-a { background:#FAEEDA; color:#854F0B; }
-  .chip-r { background:#FAECE7; color:#993C1D; }
-  .chip-p { background:#f0eaff; color:#6b3a9a; }
-
-  .note-box {
-    margin-top:12px; padding:10px 12px;
-    background:var(--sea-pale); border-radius:8px;
-    border-left:3px solid var(--sea);
-  }
-  .note-ttl { font-size:10px; font-weight:500; color:var(--sea); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; }
-  .note-txt { font-size:12px; color:var(--text2); line-height:1.6; }
-
-  .priority-box {
-    margin-top:8px; padding:10px 12px;
-    background:#f3eeff; border-radius:8px;
-    border-left:3px solid #7b52a8;
-  }
-  .priority-box .note-ttl { color:#7b52a8; }
-
-  /* ─── MEJORAS ─── */
-  .mej-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px; margin-bottom: 20px;
-  }
-  .mej-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    border: 1px solid var(--border);
-    border-left: 4px solid;
-    box-shadow: var(--shadow);
-  }
-  .mej-card.pos { border-left-color: #1D8A5E; }
-  .mej-card.neg { border-left-color: #D85A30; }
-  .mej-card.tip { border-left-color: #185FA5; }
-  .mej-card.cib { border-left-color: #7b52a8; }
-  .mej-icon { font-size:20px; margin-bottom:8px; }
-  .mej-ttl { font-family:'Syne',sans-serif; font-weight:700; font-size:13.5px; margin-bottom:7px; }
-  .mej-txt { font-size:12.5px; color:var(--text2); line-height:1.65; }
-
-  /* ─── HISTÓRICO ─── */
-  .hist-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 28px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    margin-bottom: 16px;
-  }
-  .week-row {
-    display: flex; align-items: center; gap: 14px;
-    padding: 12px 0; border-bottom: 1px solid var(--border);
-    cursor: pointer; transition: background .15s; border-radius: 8px;
-    padding-left: 8px; padding-right: 8px;
-  }
-  .week-row:last-child { border-bottom: none; }
-  .week-row:hover { background: var(--sea-pale); }
-  .week-num { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3); width:50px; }
-  .week-date { font-size:13px; font-weight:500; color:var(--text); flex:1; }
-  .week-pos { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; }
-  .pos-1 { color:#c89a2e; }
-  .pos-2 { color:#888; }
-  .pos-3 { color:#a06030; }
-  .pos-other { color:var(--sea); }
-  .week-cadencia {
-    font-family:'DM Mono',monospace; font-size:11px;
-    background:var(--sea-pale); padding:3px 9px; border-radius:20px;
-    color:var(--sea);
-  }
-  .week-trend { font-size:14px; }
-
-  .hist-chart-area {
-    background: var(--sea-pale);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 16px;
-    min-height: 180px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .msel {
-    padding: 5px 13px; border-radius: 20px; border: 1px solid var(--border);
-    background: var(--white); color: var(--text2); font-size: 12px;
-    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s;
-  }
-  .msel:hover { border-color: var(--sea); color: var(--sea); }
-  .msel.active { background: var(--sea); color: white; border-color: var(--sea); }
-
-  .hito-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
-  }
-  .hito-row:last-child { border-bottom: none; }
-  .hito-icon { font-size: 16px; flex-shrink: 0; }
-  .hito-label { flex: 1; color: var(--text2); }
-  .hito-vals { font-family: 'DM Mono', monospace; font-size: 12px; display: flex; gap: 8px; align-items: center; }
-  .hito-old { color: var(--text3); text-decoration: line-through; }
-  .hito-new { font-weight: 500; }
-  .hito-ok  { color: #1d8a5e; }
-  .hito-nog { color: #b07010; }
-  .hito-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
-  .badge-ok  { background: #e1f5ee; color: #0f6e56; }
-  .badge-prog{ background: #faeeda; color: #854f0b; }
-  .badge-new { background: var(--sea-pale); color: var(--sea); }
-
-  /* ─── UTIL ─── */
-  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; }
-  .mt16 { margin-top:16px; }
-  .mb16 { margin-bottom:16px; }
-
-  @media(max-width:560px) {
-    .stat-grid { grid-template-columns: repeat(2,1fr); }
-    .ph .ph-sub { display:none; }
-    .ph { font-size:10px; }
-  }
+@media(max-width:560px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .ph .ph-sub{display:none}
+  .ph{font-size:10px}
+  .nav-tabs{width:100%}
+}
 </style>
 </head>
 <body>
 <div class="app">
 
 <header>
-  <div>
-    <div class="club-label">⚡ Panel de análisis · Jábega Málaga</div>
-    <h1>Regata <span>de Huelin</span><br>6 Junio 2026</h1>
-    <div class="header-meta">
-      <span>Última regata: <b>3:31.82</b></span>
-      <span>Temporada: <b>2 regatas</b></span>
-      <span>Mejor resultado: <b>3.º / 12</b></span>
-      <span>Dif. con 1.º: <b>+1.39 s</b></span>
+  <div class="header-top">
+    <div>
+      <div class="club-lbl">⚡ Jábega La Araña · Málaga · Veterano Masculino</div>
+      <h1>Análisis de <span>Regatas</span><br>Temporada 2026</h1>
+      <div class="header-meta">
+        <span>Equipo: <b>La Araña</b></span>
+        <span>Regatas: <b id="hdr-total">2</b></span>
+        <span>Mejor dif. con 1.º: <b>+1.39 s</b></span>
+      </div>
     </div>
+    <div class="badge" id="hdr-badge">🥉 3.º · Huelin</div>
   </div>
-  <div class="badge-3rd">🥉 3.º · Huelin</div>
+
+  <!-- Race selector -->
+  <div class="race-selector" id="race-selector"></div>
 </header>
 
 <nav class="nav-tabs">
@@ -463,814 +210,528 @@
   <button class="tab-btn" onclick="showPanel('historico',this)">Histórico</button>
 </nav>
 
-<!-- ══════════════════════════════════════════════
-     RESUMEN
-══════════════════════════════════════════════ -->
-<div id="panel-resumen" class="panel active">
-  <div class="stat-grid">
-    <div class="stat-card accent">
-      <div class="stat-lbl">Tiempo real</div>
-      <div class="stat-val">3:56</div>
-      <div class="stat-unit">mm:ss · 0:16 → 4:12</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-lbl">Cadencia media</div>
-      <div class="stat-val">27</div>
-      <div class="stat-unit">pal/min (sin ciaboga: 29)</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-lbl">Cadencia máx.</div>
-      <div class="stat-val" style="color:#1D8A5E">34</div>
-      <div class="stat-unit">pal/min · salida</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-lbl">Ciaboga</div>
-      <div class="stat-val" style="color:#7b52a8">~25s</div>
-      <div class="stat-unit">2:10 → 2:35</div>
-    </div>
-    <div class="stat-card gold-c">
-      <div class="stat-lbl">Paladas totales</div>
-      <div class="stat-val">~100</div>
-      <div class="stat-unit">estimadas</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-lbl">Clasificación</div>
-      <div class="stat-val">3.º</div>
-      <div class="stat-unit">de 14 embarcaciones</div>
-    </div>
-  </div>
-
-  <div class="card mb16">
-    <div class="sec-lbl">Fases reales · tiempo 0:16 → 4:12</div>
-    <div class="phase-bar">
-      <div class="ph ph-ida"><span>Ida</span><span class="ph-sub">0:16–1:40</span></div>
-      <div class="ph ph-dev" style="flex:8"><span>Dev.</span><span class="ph-sub">0:46–2:10</span></div>
-      <div class="ph ph-ciab"><span>Ciaboga</span><span class="ph-sub">2:10–2:35</span></div>
-      <div class="ph ph-reac"><span>Reac.</span><span class="ph-sub">2:35–3:00</span></div>
-      <div class="ph ph-sprint"><span>Sprint</span><span class="ph-sub">3:00–4:12</span></div>
-    </div>
-    <div class="phase-legend">
-      <span><span class="pl-dot" style="background:#185FA5"></span>Salida/Ida · ~34→27 pal/min</span>
-      <span><span class="pl-dot" style="background:#1D9E75"></span>Desarrollo · ~27 pal/min</span>
-      <span><span class="pl-dot" style="background:#7b52a8"></span>Ciaboga · paladas asimétricas</span>
-      <span><span class="pl-dot" style="background:#0f7a8a"></span>Reaceleración · ~24→27 pal/min</span>
-      <span><span class="pl-dot" style="background:#993C1D"></span>Sprint · ~30–34 pal/min</span>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <div class="sec-lbl">Lo que funcionó bien</div>
-      <div style="display:flex;flex-direction:column;gap:9px">
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span><b>Ciaboga limpia y rápida</b> — ~25 s es un tiempo competitivo. Boya bien bordeada, sin choques ni correcciones bruscas post-giro.</span></div>
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span><b>Salida explosiva</b> — 34 pal/min los primeros 30 s reales.</span></div>
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span><b>Reaceleración post-ciaboga rápida</b> — en ~25 s recuperan cadencia de crucero.</span></div>
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span><b>Sprint final con patrón remando</b> — incorporación en 3:00 añade impulso visible.</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="sec-lbl">Puntos a mejorar</div>
-      <div style="display:flex;flex-direction:column;gap:9px">
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#D85A30;flex-shrink:0">✗</span><span><b>Reaceleración post-ciaboga</b> — 25 s para volver a crucero es mejorable. Objetivo &lt;15 s.</span></div>
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#D85A30;flex-shrink:0">✗</span><span><b>Estribor retarda en transiciones</b> — el marca tarda ~0.5 s en responder al pacha.</span></div>
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#D85A30;flex-shrink:0">✗</span><span><b>Ángulo de ataque bajo fatiga</b> — remos más verticales a partir de la segunda mitad.</span></div>
-        <div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#D85A30;flex-shrink:0">✗</span><span><b>Sin señal verbal de sprint</b> — la transición a 3:00 es silenciosa, resta 1-2 paladas de arranque.</span></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     CADENCIA
-══════════════════════════════════════════════ -->
-<div id="panel-cadencia" class="panel">
-
-  <!-- ── GRÁFICO A: Triple línea superpuesta ── -->
-  <div class="card mb16">
-    <div class="sec-lbl">Gráfico A · Cadencia, tumba y velocidad/palada por tramos · líneas superpuestas</div>
-
-    <!-- Leyenda -->
-    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-size:12px;color:var(--text2)">
-      <span style="display:flex;align-items:center;gap:6px">
-        <svg width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#1a6b8a" stroke-width="2.5"/></svg>
-        Cadencia (pal/min)
-      </span>
-      <span style="display:flex;align-items:center;gap:6px">
-        <svg width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#e8a020" stroke-width="2.5"/></svg>
-        Tumba (grados)
-      </span>
-      <span style="display:flex;align-items:center;gap:6px">
-        <svg width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#1d8a5e" stroke-width="2.5" stroke-dasharray="5 3"/></svg>
-        Vel/palada (m)
-      </span>
-      <span style="display:flex;align-items:center;gap:6px">
-        <svg width="14" height="10"><rect x="0" y="0" width="14" height="10" fill="#7b52a8" opacity="0.12"/></svg>
-        Ciaboga
-      </span>
-    </div>
-
-    <div class="chart-area" style="position:relative">
-      <svg width="100%" viewBox="0 0 700 230">
-        <defs>
-          <linearGradient id="cg2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#1a6b8a" stop-opacity="0.10"/>
-            <stop offset="100%" stop-color="#1a6b8a" stop-opacity="0.01"/>
-          </linearGradient>
-        </defs>
-
-        <!-- Ciaboga zone -->
-        <rect x="390" y="10" width="95" height="175" fill="#7b52a8" opacity="0.07" rx="3"/>
-        <text x="437" y="8" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#7b52a8">CIABOGA</text>
-
-        <!-- Phase labels -->
-        <text x="100" y="8" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#185FA5">IDA</text>
-        <text x="260" y="8" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#1D9E75">DESARROLLO</text>
-        <text x="512" y="8" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#0f7a8a">REAC.</text>
-        <text x="615" y="8" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#993C1D">SPRINT</text>
-
-        <!-- Grid lines -->
-        <line x1="60" y1="20"  x2="690" y2="20"  stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="60" y1="55"  x2="690" y2="55"  stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="60" y1="90"  x2="690" y2="90"  stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="60" y1="125" x2="690" y2="125" stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="60" y1="160" x2="690" y2="160" stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="60" y1="185" x2="690" y2="185" stroke="#d0e4ec" stroke-width="0.5"/>
-
-        <!-- Y axis left: Cadencia 22-34 → y185 a y20. Scale: (val-22)/(34-22)*165 inverted -->
-        <!-- y = 185 - (val-22)/12*165 -->
-        <!-- 34→20, 32→47, 30→75, 28→102, 27→116, 26→130, 24→157, 22→185 -->
-        <text x="54" y="23"  text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a">34</text>
-        <text x="54" y="93"  text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a">28</text>
-        <text x="54" y="133" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a">26</text>
-        <text x="54" y="188" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a">22</text>
-        <text x="36" y="105" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#1a6b8a" transform="rotate(-90,36,105)">pal/min</text>
-
-        <!-- Y axis right: Tumba 0-35° → y185 a y20. Scale: val/35*165 inverted -->
-        <!-- 35°→20, 28°→153, 26°→162 wait... y=185-val/35*165 → 35→20, 28→53, 26→62, 18→100, 12→128, 0→185 -->
-        <text x="696" y="23"  font-family="'DM Mono',monospace" font-size="9" fill="#e8a020">35°</text>
-        <text x="696" y="57"  font-family="'DM Mono',monospace" font-size="9" fill="#e8a020">28°</text>
-        <text x="696" y="100" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020">18°</text>
-        <text x="696" y="130" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020">12°</text>
-        <text x="696" y="188" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020">0°</text>
-
-        <!-- ── CADENCIA LINE (blue) ──
-             Phases: Salida x60→135=34, Dev x135→390=27, post-ciab x485=24, reac x560=26, sprint x600=30, end x690=34
-             y = 185-(val-22)/12*165
-             34→20, 27→116, 24→157, 26→130, 30→75, 34→20 -->
-        <polyline points="60,20 135,20 390,116" fill="none" stroke="#1a6b8a" stroke-width="2.5" stroke-linejoin="round"/>
-        <polyline points="390,116 437,185 485,157" fill="none" stroke="#7b52a8" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>
-        <polyline points="485,157 560,130 600,75 690,20" fill="none" stroke="#1a6b8a" stroke-width="2.5" stroke-linejoin="round"/>
-
-        <!-- Cadencia dots -->
-        <circle cx="60"  cy="20"  r="4" fill="#185FA5" stroke="white" stroke-width="1.5"/>
-        <circle cx="390" cy="116" r="4" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
-        <circle cx="485" cy="157" r="4" fill="#0f7a8a" stroke="white" stroke-width="1.5"/>
-        <circle cx="690" cy="20"  r="4" fill="#993C1D" stroke="white" stroke-width="1.5"/>
-
-        <!-- Cadencia value labels -->
-        <text x="60"  y="14" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#185FA5" font-weight="600">34</text>
-        <text x="390" y="110" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#1D9E75" font-weight="600">27</text>
-        <text x="485" y="151" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#0f7a8a" font-weight="600">24</text>
-        <text x="690" y="14" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#993C1D" font-weight="600">34</text>
-
-        <!-- ── TUMBA LINE (amber) ──
-             Phases: Salida=30°, Dev=28°, pre-ciab=28°, post-ciab=20°, reac=18°, sprint=12°
-             y = 185 - val/35*165
-             30→43, 28→53, 20→91, 18→100, 12→128 -->
-        <polyline points="60,43 390,53" fill="none" stroke="#e8a020" stroke-width="2.5" stroke-linejoin="round"/>
-        <polyline points="390,53 437,185 485,91" fill="none" stroke="#e8a020" stroke-width="1.5" stroke-dasharray="5 4" stroke-linejoin="round"/>
-        <polyline points="485,91 560,100 690,128" fill="none" stroke="#e8a020" stroke-width="2.5" stroke-linejoin="round"/>
-
-        <!-- Tumba dots -->
-        <circle cx="60"  cy="43"  r="4" fill="#e8a020" stroke="white" stroke-width="1.5"/>
-        <circle cx="390" cy="53"  r="4" fill="#e8a020" stroke="white" stroke-width="1.5"/>
-        <circle cx="485" cy="91"  r="4" fill="#e8a020" stroke="white" stroke-width="1.5"/>
-        <circle cx="690" cy="128" r="4" fill="#e8a020" stroke="white" stroke-width="1.5"/>
-
-        <!-- Tumba value labels -->
-        <text x="60"  y="37" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#e8a020" font-weight="600">30°</text>
-        <text x="390" y="47" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#e8a020" font-weight="600">28°</text>
-        <text x="485" y="85" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#e8a020" font-weight="600">20°</text>
-        <text x="690" y="122" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#e8a020" font-weight="600">12°</text>
-
-        <!-- ── VEL/PALADA LINE (green dashed) ──
-             Salida=7.2, Dev=7.0, post-ciab=6.4, reac=6.5, sprint=6.1
-             Scale: y = 185-(val-5.5)/2.5*165 → 7.5→ -1≈10, 7.2→26, 7.0→42, 6.5→75, 6.4→82, 6.1→101
-             Use: 7.2→26, 7.0→42, 6.4→82, 6.5→75, 6.1→101 -->
-        <polyline points="60,26 390,42" fill="none" stroke="#1d8a5e" stroke-width="2" stroke-dasharray="6 3" stroke-linejoin="round"/>
-        <polyline points="485,82 560,75 690,101" fill="none" stroke="#1d8a5e" stroke-width="2" stroke-dasharray="6 3" stroke-linejoin="round"/>
-
-        <!-- Vel/palada dots -->
-        <circle cx="60"  cy="26"  r="3.5" fill="#1d8a5e" stroke="white" stroke-width="1.5"/>
-        <circle cx="390" cy="42"  r="3.5" fill="#1d8a5e" stroke="white" stroke-width="1.5"/>
-        <circle cx="485" cy="82"  r="3.5" fill="#1d8a5e" stroke="white" stroke-width="1.5"/>
-        <circle cx="690" cy="101" r="3.5" fill="#1d8a5e" stroke="white" stroke-width="1.5"/>
-
-        <!-- Vel/palada labels -->
-        <text x="75"  y="22" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">7.2m</text>
-        <text x="370" y="36" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">7.0m</text>
-        <text x="500" y="77" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">6.4m</text>
-        <text x="675" y="95" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">6.1m</text>
-
-        <!-- X labels -->
-        <text x="60"  y="210" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">0:16</text>
-        <text x="135" y="210" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">0:46</text>
-        <text x="390" y="210" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#7b52a8">2:10</text>
-        <text x="485" y="210" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#7b52a8">2:35</text>
-        <text x="560" y="210" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">3:00</text>
-        <text x="690" y="210" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">4:12</text>
-
-        <!-- Key insight annotation -->
-        <rect x="490" y="58" width="170" height="38" rx="5" fill="white" stroke="#e8a020" stroke-width="0.8" opacity="0.95"/>
-        <text x="498" y="71" font-family="'DM Sans',sans-serif" font-size="9" fill="#b07010">↑ cadencia pero ↓ tumba</text>
-        <text x="498" y="84" font-family="'DM Sans',sans-serif" font-size="9" fill="#4a6270">= vel/palada cae en sprint</text>
-      </svg>
-    </div>
-    <p style="font-size:11px;color:var(--text3);margin-top:6px">Línea discontinua = durante ciaboga. Eje izquierdo: cadencia (pal/min). Eje derecho: tumba (°). Línea verde: vel/palada en metros.</p>
-  </div>
-
-  <!-- ── GRÁFICO B: Barras agrupadas por fase ── -->
-  <div class="card mb16">
-    <div class="sec-lbl">Gráfico B · Comparativa por fases · barras agrupadas</div>
-
-    <!-- Leyenda -->
-    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px;font-size:12px;color:var(--text2)">
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#1a6b8a;display:inline-block"></span>Cadencia (pal/min)</span>
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#e8a020;display:inline-block"></span>Tumba (°)</span>
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#1d8a5e;display:inline-block"></span>Vel/palada (×10 para escala)</span>
-    </div>
-
-    <div id="bar-chart-wrapper" style="overflow-x:auto">
-      <svg width="100%" viewBox="0 0 680 220">
-
-        <!-- Phases data:
-          Ida: cad=34, tumba=30, vel=7.2
-          Desarrollo: cad=27, tumba=28, vel=7.0
-          Reac: cad=24, tumba=20, vel=6.4
-          Sprint: cad=31, tumba=12, vel=6.1
-          Scale all to max 38 → bar height = val/38*160
-          34→143, 30→126, 72(7.2×10)→ wait, use direct %: 34/38=89%, 30/38=79%, 72/38 too big
-          Use separate scales visually: cadencia /38*160, tumba /38*160, vel*10/38*160 (so 7.2→30.3/38*160=127)
-          Actually simpler: cadencia /38*160, tumba /35*160, vel*10/75*160
-          34/38*160=143, 27/38*160=114, 24/38*160=101, 31/38*160=131
-          30/35*160=137, 28/35*160=128, 20/35*160=91, 12/35*160=55
-          7.2*10/75*160=154, 7.0*10/75*160=149, 6.4*10/75*160=136, 6.1*10/75*160=130
-        -->
-
-        <!-- Grid -->
-        <line x1="40" y1="20"  x2="670" y2="20"  stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="40" y1="60"  x2="670" y2="60"  stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="40" y1="100" x2="670" y2="100" stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="40" y1="140" x2="670" y2="140" stroke="#d0e4ec" stroke-width="0.5"/>
-        <line x1="40" y1="180" x2="670" y2="180" stroke="#d0e4ec" stroke-width="0.8"/>
-
-        <!-- Phase: IDA (x=55) -->
-        <text x="113" y="14" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#185FA5">IDA</text>
-        <!-- cad bar -->
-        <rect x="57" y="37" width="22" height="143" rx="3" fill="#1a6b8a"/>
-        <text x="68" y="32" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a" font-weight="600">34</text>
-        <!-- tumba bar -->
-        <rect x="83" y="43" width="22" height="137" rx="3" fill="#e8a020"/>
-        <text x="94" y="38" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020" font-weight="600">30°</text>
-        <!-- vel bar -->
-        <rect x="109" y="26" width="22" height="154" rx="3" fill="#1d8a5e" opacity="0.85"/>
-        <text x="120" y="21" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">7.2</text>
-
-        <!-- Phase: DESARROLLO (x=215) -->
-        <text x="268" y="14" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1D9E75">DESARROLLO</text>
-        <rect x="212" y="66" width="22" height="114" rx="3" fill="#1a6b8a" opacity="0.75"/>
-        <text x="223" y="61" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a" font-weight="600">27</text>
-        <rect x="238" y="52" width="22" height="128" rx="3" fill="#e8a020" opacity="0.75"/>
-        <text x="249" y="47" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020" font-weight="600">28°</text>
-        <rect x="264" y="31" width="22" height="149" rx="3" fill="#1d8a5e" opacity="0.65"/>
-        <text x="275" y="26" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">7.0</text>
-
-        <!-- Phase: REAC. (x=370) -->
-        <text x="373" y="14" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#0f7a8a">REAC.</text>
-        <rect x="347" y="79" width="22" height="101" rx="3" fill="#0f7a8a" opacity="0.75"/>
-        <text x="358" y="74" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#0f7a8a" font-weight="600">24</text>
-        <rect x="373" y="89" width="22" height="91" rx="3" fill="#e8a020" opacity="0.65"/>
-        <text x="384" y="84" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020" font-weight="600">20°</text>
-        <rect x="399" y="44" width="22" height="136" rx="3" fill="#1d8a5e" opacity="0.55"/>
-        <text x="410" y="39" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">6.4</text>
-
-        <!-- Phase: SPRINT (x=500) -->
-        <text x="533" y="14" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#993C1D">SPRINT</text>
-        <rect x="497" y="49" width="22" height="131" rx="3" fill="#993C1D"/>
-        <text x="508" y="44" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#993C1D" font-weight="600">31</text>
-        <rect x="523" y="125" width="22" height="55" rx="3" fill="#e8a020" opacity="0.9"/>
-        <text x="534" y="120" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020" font-weight="600">12°</text>
-        <rect x="549" y="50" width="22" height="130" rx="3" fill="#1d8a5e" opacity="0.45"/>
-        <text x="560" y="45" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">6.1</text>
-
-        <!-- Key callout: sprint anomaly -->
-        <rect x="480" y="155" width="185" height="28" rx="5" fill="#fff5e6" stroke="#e8a020" stroke-width="0.8"/>
-        <text x="488" y="166" font-family="'DM Sans',sans-serif" font-size="9" fill="#b07010" font-weight="500">Cadencia sube ↑ pero tumba cae ↓</text>
-        <text x="488" y="178" font-family="'DM Sans',sans-serif" font-size="9" fill="#4a6270">→ vel/palada más baja de la regata</text>
-
-        <!-- X baseline -->
-        <line x1="40" y1="180" x2="670" y2="180" stroke="#8aabb8" stroke-width="0.8"/>
-
-      </svg>
-    </div>
-    <p style="font-size:11px;color:var(--text3);margin-top:6px">Vel/palada mostrada directamente en metros. Tumba en grados estimados visualmente desde el vídeo.</p>
-  </div>
-
-  <!-- Stat summary -->
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-lbl">Cadencia ida</div><div class="stat-val" style="color:#185FA5">34</div><div class="stat-unit">pal/min · tumba 30°</div></div>
-    <div class="stat-card"><div class="stat-lbl">Cadencia desarrollo</div><div class="stat-val" style="color:#1D8A5E">27</div><div class="stat-unit">pal/min · tumba 28°</div></div>
-    <div class="stat-card ciab-metric"><div class="stat-lbl">Ciaboga</div><div class="stat-val">~25 s</div><div class="stat-unit">paladas asimétricas</div></div>
-    <div class="stat-card"><div class="stat-lbl">Reaceleración</div><div class="stat-val" style="color:#0f7a8a">24</div><div class="stat-unit">pal/min · tumba 20°</div></div>
-    <div class="stat-card"><div class="stat-lbl">Sprint</div><div class="stat-val" style="color:#993C1D">31</div><div class="stat-unit">pal/min · tumba 12°</div></div>
-    <div class="stat-card" style="background:#e1f5ee;border-color:rgba(29,138,94,0.2)">
-      <div class="stat-lbl">Vel/palada sprint</div>
-      <div class="stat-val" style="color:#993C1D">6.1 m</div>
-      <div class="stat-unit" style="color:#993C1D">vs 7.2 m en salida</div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     CIABOGA
-══════════════════════════════════════════════ -->
-<div id="panel-ciaboga" class="panel">
-
-  <div class="ciab-grid">
-    <div class="ciab-metric">
-      <div class="stat-lbl">Inicio ciaboga</div>
-      <div class="stat-val">2:10</div>
-      <div class="stat-unit">boya roja en cuadro</div>
-    </div>
-    <div class="ciab-metric">
-      <div class="stat-lbl">Duración giro</div>
-      <div class="stat-val">~25 s</div>
-      <div class="stat-unit">2:10 → 2:35</div>
-    </div>
-    <div class="ciab-metric">
-      <div class="stat-lbl">Reaceleración</div>
-      <div class="stat-val">~25 s</div>
-      <div class="stat-unit">2:35 → 3:00</div>
-    </div>
-    <div class="ciab-metric">
-      <div class="stat-lbl">Tiempo total</div>
-      <div class="stat-val">~50 s</div>
-      <div class="stat-unit">impacto en cadencia</div>
-    </div>
-  </div>
-
-  <div class="card mb16">
-    <div class="sec-lbl">Secuencia fotograma a fotograma</div>
-    <div class="ciab-timeline">
-      <div class="ciab-step">
-        <div class="ciab-time">2:10</div>
-        <div class="ciab-dot" style="background:#185FA5"></div>
-        <div class="ciab-text"><b>Aproximación a la boya</b> — Boya roja visible en cuadro. La barca llega con cadencia de crucero (~27 pal/min). Otra embarcación rival se ve en el horizonte izquierdo. El patrón comienza a cargar la espailla para iniciar el giro.</div>
-      </div>
-      <div class="ciab-step">
-        <div class="ciab-time">2:15</div>
-        <div class="ciab-dot" style="background:#7b52a8"></div>
-        <div class="ciab-text"><b>Inicio del giro</b> — La boya queda a babor. Los remos de estribor dejan de remar o reducen potencia. Los de babor aumentan la presión para girar. El patrón usa la espailla con decisión. La barca comienza a virar.</div>
-      </div>
-      <div class="ciab-step">
-        <div class="ciab-time">2:20</div>
-        <div class="ciab-dot" style="background:#7b52a8"></div>
-        <div class="ciab-text"><b>Giro en curso</b> — Fotograma clave: boya roja pegada al costado babor, bandera amarilla visible. La embarcación está en el ángulo máximo de giro. Remos de ambas bandas trabajan asimétricamente. El patrón mantiene postura baja y firme sobre la espailla.</div>
-      </div>
-      <div class="ciab-step">
-        <div class="ciab-time">2:28</div>
-        <div class="ciab-dot" style="background:#7b52a8"></div>
-        <div class="ciab-text"><b>Completando la virada</b> — La boya ha quedado atrás. La proa apunta hacia la playa de regreso. Los remeros comienzan a recolocarse y sincronizarse. El patrón aún corrige el rumbo. Se aprecian remos desordenados en estribor durante el reajuste.</div>
-      </div>
-      <div class="ciab-step">
-        <div class="ciab-time">2:35</div>
-        <div class="ciab-dot" style="background:#0f7a8a"></div>
-        <div class="ciab-text"><b>Fin de ciaboga, inicio de reaceleración</b> — La barca está orientada de vuelta. Los remeros retoman paladas simétricas. El pacha marca una cadencia baja (~22 pal/min) para reorganizar el equipo antes de subir.</div>
-      </div>
-      <div class="ciab-step">
-        <div class="ciab-time">2:50</div>
-        <div class="ciab-dot" style="background:#0f7a8a"></div>
-        <div class="ciab-text"><b>Reaceleración</b> — Cadencia sube progresivamente ~24 pal/min. Equipo sincronizado de nuevo. La pérdida de cadencia observada antes (lo que parecía "bajón por fatiga") es en realidad esta fase de reaceleración post-ciaboga, completamente normal.</div>
-      </div>
-      <div class="ciab-step">
-        <div class="ciab-time">3:00</div>
-        <div class="ciab-dot" style="background:#993C1D"></div>
-        <div class="ciab-text"><b>Cadencia de crucero retomada → Sprint</b> — En ~27 pal/min se encadena directamente con el sprint final. El patrón se incorpora a remar. La transición ciaboga→sprint es razonablemente eficiente.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <div class="sec-lbl">Análisis técnico de la ciaboga</div>
-      <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;line-height:1.6">
-        <div style="display:flex;gap:10px"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span><b>Radio de giro ajustado</b> — la boya se bordea limpiamente sin tener que dar un arco largo. El patrón conoce bien el punto de inicio del giro.</span></div>
-        <div style="display:flex;gap:10px"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span><b>Sin pérdida de tiempo por error</b> — no hay correcciones adicionales post-giro. La barca sale bien orientada a la primera.</span></div>
-        <div style="display:flex;gap:10px"><span style="color:#D85A30;flex-shrink:0">✗</span><span><b>Reordenamiento de estribor lento</b> — los remos de estribor tardan ~5 s más que babor en retomar el ritmo coordinado tras el giro.</span></div>
-        <div style="display:flex;gap:10px"><span style="color:#D85A30;flex-shrink:0">✗</span><span><b>Reaceleración: 25 s para volver a crucero</b> — el objetivo competitivo es &lt;15 s. Esos 10 s de diferencia equivalen a ~4–5 paladas perdidas.</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="sec-lbl">Reasignación del "bajón"</div>
-      <div style="background:#f3eeff;border-radius:8px;padding:14px;border-left:3px solid #7b52a8;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:500;color:#5a3a88;margin-bottom:6px">✅ Corrección del análisis anterior</div>
-        <div style="font-size:12.5px;color:#4a3a6a;line-height:1.65">Lo que antes llamamos "bajón por fatiga" (min 2:10–3:00) es en realidad la <b>ciaboga + reaceleración</b>. No refleja cansancio del equipo sino la mecánica normal de la virada. El equipo no tiene bajón real de fatiga en esta regata.</div>
-      </div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.6">La fatiga post-ciaboga sí puede afectar la calidad técnica (ángulo de ataque, sincronía) en los primeros 15 s tras el giro — eso es lo que hay que entrenar específicamente.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     REMEROS
-══════════════════════════════════════════════ -->
-<div id="panel-remeros" class="panel">
-  <div id="rower-grid" class="rower-grid"></div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     MEJORAS
-══════════════════════════════════════════════ -->
-<div id="panel-mejoras" class="panel">
-  <div class="mej-grid">
-    <div class="mej-card pos">
-      <div class="mej-icon">🎯</div>
-      <div class="mej-ttl">Mantener: salida explosiva</div>
-      <div class="mej-txt">34 pal/min los primeros 30 s reales. Consolidar la señal de inicio entre pacha y patrón como protocolo fijo.</div>
-    </div>
-    <div class="mej-card pos">
-      <div class="mej-icon">⚓</div>
-      <div class="mej-ttl">Mantener: sprint con patrón</div>
-      <div class="mej-txt">Incorporación del patrón a remar desde 3:00 aporta potencia extra en el momento crítico. Fijar como norma.</div>
-    </div>
-    <div class="mej-card cib">
-      <div class="mej-icon">🔄</div>
-      <div class="mej-ttl">Prioridad 1: reaceleración post-ciaboga</div>
-      <div class="mej-txt">Bajar de 25 s a &lt;15 s para volver a cadencia de crucero tras la virada. Entrenar la ciaboga como una fase específica: el pacha debe dar la primera palada fuerte en cuanto la boya quede atrás. 4–5 paladas perdidas = posiciones perdidas.</div>
-    </div>
-    <div class="mej-card neg">
-      <div class="mej-icon">🔄</div>
-      <div class="mej-ttl">Prioridad 2: estribor en transiciones</div>
-      <div class="mej-txt">El marca retarda ~0.5 s los cambios del pacha. Sesiones dúo pacha–marca para afinar la escucha. Objetivo: &lt;0.2 s de retardo.</div>
-    </div>
-    <div class="mej-card neg">
-      <div class="mej-icon">📐</div>
-      <div class="mej-ttl">Prioridad 3: ángulo de ataque</div>
-      <div class="mej-txt">Bajo fatiga (segunda mitad) los remos entran más verticales. Trabajo técnico en espejo con paladas lentas para fijar el hábito muscular incluso bajo carga.</div>
-    </div>
-    <div class="mej-card tip">
-      <div class="mej-icon">💬</div>
-      <div class="mej-ttl">Sugerencia: señal verbal de sprint</div>
-      <div class="mej-txt">Una señal clara del patrón ("¡venga!", "a la próxima") anticipando el sprint sincronizaría mejor la subida. La transición actual es silenciosa y resta 1–2 paladas de arranque.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="sec-lbl">Plan de trabajo semanal</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px">
-      <div>
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--sea);margin-bottom:10px">Semana 1–2</div>
-        <ul style="font-size:12.5px;color:var(--text2);line-height:1.8;padding-left:14px">
-          <li>Ciaboga repetida: 5×ciaboga con crono de reaceleración. Objetivo: &lt;15 s para retomar crucero.</li>
-          <li>Sesiones dúo pacha–marca: cambios bruscos de ritmo.</li>
-          <li>Grabar desde lateral: revisar ángulo de ataque individual.</li>
-        </ul>
-      </div>
-      <div>
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--sea);margin-bottom:10px">Semana 3–4</div>
-        <ul style="font-size:12.5px;color:var(--text2);line-height:1.8;padding-left:14px">
-          <li>Series 2×4 min (incluye ciaboga real) — mantener ≥27 pal/min post-giro.</li>
-          <li>Fuerza-resistencia para posiciones centrales (B3/E3).</li>
-          <li>Paladas lentas en espejo: énfasis en extensión hacia proa.</li>
-        </ul>
-      </div>
-      <div>
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--sea);margin-bottom:10px">Objetivos próx. regata</div>
-        <ul style="font-size:12.5px;color:var(--text2);line-height:1.8;padding-left:14px">
-          <li>Reaceleración post-ciaboga &lt;15 s</li>
-          <li>Estribor responde &lt;0.2 s al pacha</li>
-          <li>Señal verbal de patrón en 3:00</li>
-          <li>Cadencia crucero: ≥28 pal/min en la vuelta</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     HISTÓRICO
-══════════════════════════════════════════════ -->
-<div id="panel-historico" class="panel">
-
-  <!-- Comparativa rápida las dos regatas -->
-  <div class="card mb16">
-    <div class="sec-lbl">Comparativa directa · Pedregalejo vs Huelin</div>
-    <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead>
-          <tr style="border-bottom:2px solid var(--border)">
-            <th style="padding:8px 10px;text-align:left;font-weight:500;color:var(--text3);font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.08em">MÉTRICA</th>
-            <th style="padding:8px 14px;text-align:center;color:#185FA5;font-weight:700;font-size:12px">Pedregalejo<br><span style="font-weight:400;font-size:10px;color:var(--text3)">30 Mayo</span></th>
-            <th style="padding:8px 14px;text-align:center;color:#1d8a5e;font-weight:700;font-size:12px">Huelin<br><span style="font-weight:400;font-size:10px;color:var(--text3)">6 Junio</span></th>
-            <th style="padding:8px 10px;text-align:center;font-weight:500;color:var(--text3);font-size:11px">Tendencia</th>
-          </tr>
-        </thead>
-        <tbody id="comp-table-body"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Gráficas de evolución -->
-  <div class="card mb16">
-    <div class="sec-lbl">Evolución semana a semana</div>
-
-    <!-- Selector de métrica -->
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px" id="metric-selector">
-      <button class="msel active" data-metric="difLider" onclick="selectMetric(this,'difLider')">Diferencia con 1.º</button>
-      <button class="msel" data-metric="cadMedia" onclick="selectMetric(this,'cadMedia')">Cadencia media</button>
-      <button class="msel" data-metric="ciabogaDur" onclick="selectMetric(this,'ciabogaDur')">Ciaboga (s)</button>
-      <button class="msel" data-metric="reaceleracion" onclick="selectMetric(this,'reaceleracion')">Reaceleración (s)</button>
-      <button class="msel" data-metric="tumbaSprint" onclick="selectMetric(this,'tumbaSprint')">Tumba sprint (°)</button>
-      <button class="msel" data-metric="velPalada" onclick="selectMetric(this,'velPalada')">Vel/palada (m)</button>
-    </div>
-
-    <div class="chart-area" id="evol-chart" style="min-height:160px"></div>
-    <p style="font-size:11px;color:var(--text3);margin-top:6px" id="evol-note"></p>
-  </div>
-
-  <!-- Registro tabla -->
-  <div class="hist-card">
-    <div class="sec-lbl">Registro de regatas</div>
-    <div id="hist-list"></div>
-  </div>
-
-  <!-- Hitos -->
-  <div class="card mt16">
-    <div class="sec-lbl">Hitos · estado actual</div>
-    <div id="hitos-list" style="display:flex;flex-direction:column;gap:0"></div>
-  </div>
-
-</div>
+<div id="panel-resumen"  class="panel active"></div>
+<div id="panel-cadencia" class="panel"></div>
+<div id="panel-ciaboga"  class="panel"></div>
+<div id="panel-remeros"  class="panel"></div>
+<div id="panel-mejoras"  class="panel"></div>
+<div id="panel-historico" class="panel"></div>
 
 </div><!-- /app -->
-
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// ACTUALIZACIÓN SEMANAL — solo hay que tocar este bloque
-//
-// Cada semana, añade una entrada nueva ANTES del cierre ];
-// Copia el bloque de ejemplo y rellena los valores:
-//
-//   week          → número de semana (2, 3, 4…)
-//   date          → fecha en texto  ('7 Junio 2026')
-//   pos           → posición final  (1, 2, 3…)
-//   total         → nº embarcaciones en la regata
-//   cadMedia      → cadencia media en pal/min (número entero)
-//   cadMax        → cadencia máxima alcanzada
-//   cadSprint     → cadencia en el sprint final
-//   ciabogaDur    → duración de la ciaboga en segundos
-//   reaceleracion → segundos hasta retomar cadencia de crucero
-//   notes         → texto libre con lo más destacado
-//
-// Ejemplo semana 2:
-//   {
-//     week: 2, date: '7 Junio 2026', pos: 2, total: 12,
-//     distancia: 705,
-//     cadMedia: 29, cadMax: 35, cadSprint: 33,
-//     ciabogaDur: 22, reaceleracion: 18,
-//     tumbaIda: 30, tumbaSprint: 20,
-//     velPalada: 7.3,
-//     notes: 'Reaceleración mejorada. Tumba más sostenida en sprint.',
-//   },
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// DATOS — editar solo este bloque cada semana
+// ═══════════════════════════════════════════════════
 const RACES = [
   {
-    week: 1,
-    date: '30 Mayo 2026',
-    nombre: 'Regata de Pedregalejo',
-    pos: 3,
-    total: 12,
-    tiempoOficial: '3:49.56',
-    difLider: 8.28,
-    distancia: 700,
-    cadMedia: 27,
-    cadMax: 34,
-    cadSprint: 31,
-    ciabogaDur: 25,
-    reaceleracion: 25,
-    tumbaIda: 30,
-    tumbaSprint: 12,
-    velPalada: 7.0,
-    notes: 'Ciaboga limpia. Reaceleración mejorable (25 s). Tumba cae en sprint (30°→12°).',
+    week:1, date:'30 Mayo 2026', nombre:'Regata de Pedregalejo',
+    pos:3, total:12, tiempoOficial:'3:49.56', difLider:8.28,
+    distancia:700, tiempoReal:'3:56', cadMedia:27, cadMax:34, cadSprint:31,
+    ciabogaDur:25, reaceleracion:25, tumbaIda:30, tumbaSprint:12, velPalada:7.0,
+    notes:'Ciaboga limpia. Reaceleración mejorable (25 s). Tumba cae en sprint (30°→12°).',
+    // Fases para gráfico cadencia
+    fases:[
+      {nombre:'Ida',       t:'0:16', cad:34, tumba:30, vel:7.2, col:'#185FA5', flex:13},
+      {nombre:'Desarrollo',t:'0:46', cad:27, tumba:28, vel:7.0, col:'#1D9E75', flex:25},
+      {nombre:'Ciaboga',   t:'2:10', cad:null,tumba:null,vel:null,col:'#7b52a8',flex:15},
+      {nombre:'Reac.',     t:'2:35', cad:24, tumba:20, vel:6.4, col:'#0f7a8a', flex:14},
+      {nombre:'Sprint',    t:'3:00', cad:31, tumba:12, vel:6.1, col:'#993C1D', flex:33},
+    ],
+    ciabogaSteps:[
+      {t:'2:10',col:'#185FA5',txt:'<b>Aproximación a la boya</b> — Boya roja en cuadro. Cadencia de crucero ~27 pal/min. Patrón carga la espailla.'},
+      {t:'2:15',col:'#7b52a8',txt:'<b>Inicio del giro</b> — Boya a babor. Estribor reduce potencia, babor aumenta. La barca vira.'},
+      {t:'2:20',col:'#7b52a8',txt:'<b>Giro en curso</b> — Boya pegada al costado babor. Remos asimétricas. Patrón firme en la espailla.'},
+      {t:'2:28',col:'#7b52a8',txt:'<b>Completando la virada</b> — Proa apunta a la playa. Remos de estribor tardan ~5 s en reordenarse.'},
+      {t:'2:35',col:'#0f7a8a',txt:'<b>Fin de ciaboga</b> — Barca orientada. Pacha marca ~22 pal/min para reorganizar.'},
+      {t:'2:50',col:'#0f7a8a',txt:'<b>Reaceleración</b> — Cadencia sube a ~24 pal/min. La «caída» que se veía era esta fase, no fatiga.'},
+      {t:'3:00',col:'#993C1D',txt:'<b>Crucero retomado → Sprint</b> — Patrón se incorpora a remar. Transición directa al sprint.'},
+    ],
+    alineacion:[
+      {id:'che',    nombre:'Che',        pos:'B1 · Pacha', banda:'babor',   avatar:'CH'},
+      {id:'jcarlos',nombre:'Juan Carlos',pos:'B2',         banda:'babor',   avatar:'JC'},
+      {id:'paco',   nombre:'Paco',       pos:'B3',         banda:'babor',   avatar:'PA'},
+      {id:'antonio',nombre:'Antonio',    pos:'B4',         banda:'babor',   avatar:'AN'},
+      {id:'benjamin',nombre:'Benjamín',  pos:'E1 · Marca', banda:'estribor',avatar:'BJ'},
+      {id:'juanjo', nombre:'Juanjo',     pos:'E2',         banda:'estribor',avatar:'JJ'},
+      {id:'asier',  nombre:'Asier',      pos:'E3',         banda:'estribor',avatar:'AS'},
+      {id:'pedro',  nombre:'Pedro',      pos:'Patrón',     banda:'patron',  avatar:'PT'},
+    ],
+    remeros:{
+      che:    {scores:[{l:'Técnica',p:82,c:'fg'},{l:'Sincronía',p:92,c:'fg'},{l:'Resistencia',p:72,c:'fa'},{l:'Amplitud',p:85,c:'fg'},{l:'Ciaboga',p:80,c:'fp'}],
+               phases:['chip-g','chip-g','chip-p','chip-a','chip-g'],
+               notes:'Ritmo claro y firme. Buena amplitud. Pequeña pérdida en reaceleración post-ciaboga.',
+               priority:'Entrenar la primera palada tras la ciaboga como acción refleja.'},
+      jcarlos:{scores:[{l:'Técnica',p:84,c:'fg'},{l:'Sincronía',p:88,c:'fg'},{l:'Resistencia',p:80,c:'fg'},{l:'Constancia',p:86,c:'fg'},{l:'Ciaboga',p:82,c:'fg'}],
+               phases:['chip-g','chip-g','chip-g','chip-g','chip-g'],
+               notes:'Remero más consistente. Mantiene postura y extensión en toda la regata. Rápida reincorporación post-ciaboga.',
+               priority:'Mantener el nivel. Puede asumir liderazgo si el pacha decae.'},
+      paco:   {scores:[{l:'Técnica',p:72,c:'fa'},{l:'Sincronía',p:74,c:'fa'},{l:'Resistencia',p:55,c:'fr'},{l:'Recobro',p:63,c:'fa'},{l:'Ciaboga',p:70,c:'fa'}],
+               phases:['chip-g','chip-a','chip-a','chip-a','chip-a'],
+               notes:'Acusa fatiga precoz: recobro se acorta a partir del min 2. Hombros suben bajo esfuerzo.',
+               priority:'Programa de fuerza-resistencia fuera del agua. Series largas priorizando calidad técnica.'},
+      antonio:{scores:[{l:'Técnica',p:78,c:'fg'},{l:'Sincronía',p:72,c:'fa'},{l:'Resistencia',p:70,c:'fa'},{l:'Sprint',p:67,c:'fa'},{l:'Ciaboga',p:75,c:'fp'}],
+               phases:['chip-g','chip-g','chip-p','chip-a','chip-a'],
+               notes:'Buena primera mitad. A partir del min 2 pierde coordinación con el pacha. Fatiga afecta timing de entrada.',
+               priority:'Series de seguimiento del ritmo bajo fatiga: 3×3 min a ritmo de carrera.'},
+      benjamin:{scores:[{l:'Técnica',p:76,c:'fg'},{l:'Sincronía',p:65,c:'fa'},{l:'Resistencia',p:74,c:'fa'},{l:'Reacción',p:60,c:'fa'},{l:'Ciaboga',p:62,c:'fa'}],
+               phases:['chip-g','chip-g','chip-a','chip-a','chip-a'],
+               notes:'Como marca retarda ~0.5 s los cambios del pacha, arrastrando al resto de estribor.',
+               priority:'Sesiones dúo pacha–marca para reducir retardo a <0.2 s.'},
+      juanjo: {scores:[{l:'Técnica',p:70,c:'fa'},{l:'Sincronía',p:64,c:'fa'},{l:'Resistencia',p:68,c:'fa'},{l:'Ángulo',p:55,c:'fr'},{l:'Ciaboga',p:60,c:'fa'}],
+               phases:['chip-g','chip-a','chip-a','chip-r','chip-a'],
+               notes:'Ángulo de ataque cae en segunda mitad. Hombros altos y remo más vertical.',
+               priority:'Extensión hacia proa en posición de agarre. Grabación lateral para detectar pérdida de ángulo.'},
+      asier:  {scores:[{l:'Técnica',p:62,c:'fa'},{l:'Sincronía',p:60,c:'fa'},{l:'Extracción',p:50,c:'fr'},{l:'Resistencia',p:65,c:'fa'},{l:'Ciaboga',p:58,c:'fa'}],
+               phases:['chip-g','chip-a','chip-a','chip-r','chip-a'],
+               notes:'Remo sale antes de completar el tirón. Pérdida de energía en la extracción, más pronunciada en segunda mitad.',
+               priority:'Trabajo de extracción: finalizar tirón hasta la cadera. Paladas cortas para sentir el final del recorrido.'},
+      pedro:  {scores:[{l:'Gobierno',p:92,c:'fg'},{l:'Rumbo',p:95,c:'fg'},{l:'Ciaboga',p:85,c:'fp'},{l:'Comunicación',p:62,c:'fa'},{l:'Sprint',p:80,c:'fg'}],
+               phases:['chip-g','chip-g','chip-p','chip-a','chip-g'],
+               notes:'Gestión de espailla sobresaliente. Ciaboga limpia. Comunicación verbal no perceptible en el bajón.',
+               priority:'Protocolo verbal: aviso pre-ciaboga, "¡ya!" al inicio de reaceleración, señal de sprint en 3:00.'},
+    },
+    mejoras:[
+      {tipo:'pos',icon:'🎯',ttl:'Mantener: salida explosiva',txt:'34 pal/min los primeros 30 s. Consolidar la señal de inicio entre pacha y patrón.'},
+      {tipo:'pos',icon:'⚓',ttl:'Mantener: sprint con patrón',txt:'Incorporación de Pedro a remar desde 3:00 aporta potencia extra. Fijar como norma.'},
+      {tipo:'pos',icon:'✅',ttl:'Mantener: rumbo impecable',txt:'Mínimas correcciones de espailla. Cero energía perdida en deriva lateral.'},
+      {tipo:'cib',icon:'🔄',ttl:'P1: Reaceleración post-ciaboga',txt:'25 s para volver a crucero. Objetivo <15 s. Entrenar la ciaboga como fase específica.'},
+      {tipo:'neg',icon:'🔄',ttl:'P2: Estribor en transiciones',txt:'Marca retarda ~0.5 s al pacha. Sesiones dúo pacha–marca. Objetivo: <0.2 s.'},
+      {tipo:'neg',icon:'📐',ttl:'P3: Ángulo de ataque',txt:'Remos más verticales bajo fatiga. Paladas lentas en espejo para fijar el hábito.'},
+      {tipo:'tip',icon:'💬',ttl:'Señal verbal de sprint',txt:'La transición a 3:00 es silenciosa. Una señal clara de Pedro sincronizaría mejor.'},
+    ],
   },
   {
-    week: 2,
-    date: '6 Junio 2026',
-    nombre: 'Regata de Huelin',
-    pos: 3,
-    total: 12,
-    tiempoOficial: '3:31.82',
-    difLider: 1.39,
-    distancia: 680,
-    cadMedia: 28,
-    cadMax: 33,
-    cadSprint: 32,
-    ciabogaDur: 20,
-    reaceleracion: 15,
-    tumbaIda: 28,
-    tumbaSprint: 18,
-    velPalada: 7.1,
-    notes: 'Gran mejora vs líder (+1.4 s). Ciaboga más rápida (20 s). Reaceleración: objetivo cumplido (15 s). Tumba sprint mejorada (18°).',
+    week:2, date:'6 Junio 2026', nombre:'Regata de Huelin',
+    pos:3, total:12, tiempoOficial:'3:31.82', difLider:1.39,
+    distancia:680, tiempoReal:'3:37', cadMedia:28, cadMax:33, cadSprint:32,
+    ciabogaDur:20, reaceleracion:15, tumbaIda:28, tumbaSprint:18, velPalada:7.1,
+    notes:'Gran mejora vs líder (+1.4 s). Ciaboga más rápida (20 s). Reaceleración objetivo cumplido (15 s). Tumba sprint mejorada.',
+    fases:[
+      {nombre:'Ida',       t:'0:06', cad:33, tumba:28, vel:7.2, col:'#185FA5', flex:13},
+      {nombre:'Desarrollo',t:'0:36', cad:28, tumba:26, vel:7.1, col:'#1D9E75', flex:26},
+      {nombre:'Ciaboga',   t:'1:50', cad:null,tumba:null,vel:null,col:'#7b52a8',flex:13},
+      {nombre:'Reac.',     t:'2:10', cad:25, tumba:20, vel:6.8, col:'#0f7a8a', flex:11},
+      {nombre:'Sprint',    t:'2:25', cad:32, tumba:18, vel:6.6, col:'#993C1D', flex:37},
+    ],
+    ciabogaSteps:[
+      {t:'1:50',col:'#185FA5',txt:'<b>Aproximación a la boya</b> — Boya roja visible. Patrón prepara el giro con más anticipación que en Pedregalejo.'},
+      {t:'1:55',col:'#7b52a8',txt:'<b>Inicio del giro</b> — Virada más ajustada al la boya. Radio menor que en Pedregalejo.'},
+      {t:'2:02',col:'#7b52a8',txt:'<b>Giro completado</b> — En solo ~12 s la barca está orientada de vuelta. Mejora notable.'},
+      {t:'2:10',col:'#0f7a8a',txt:'<b>Reaceleración rápida</b> — En 15 s ya están a cadencia de crucero. Objetivo cumplido.'},
+      {t:'2:25',col:'#993C1D',txt:'<b>Sprint</b> — Encadena directamente desde la reaceleración. Patrón rema desde el inicio del sprint.'},
+    ],
+    alineacion:[
+      {id:'che',     nombre:'Che',       pos:'B1 · Pacha', banda:'babor',   avatar:'CH'},
+      {id:'juan',    nombre:'Juan',      pos:'B2',         banda:'babor',   avatar:'JU'},
+      {id:'jcarlos', nombre:'Juan Carlos',pos:'B3',        banda:'babor',   avatar:'JC'},
+      {id:'paco',    nombre:'Paco',      pos:'B4',         banda:'babor',   avatar:'PA'},
+      {id:'patricio',nombre:'Patricio',  pos:'E1 · Marca', banda:'estribor',avatar:'PC'},
+      {id:'benjamin',nombre:'Benjamín',  pos:'E2',         banda:'estribor',avatar:'BJ'},
+      {id:'enrique', nombre:'Enrique',   pos:'E3',         banda:'estribor',avatar:'EN'},
+      {id:'pedro',   nombre:'Pedro',     pos:'Patrón',     banda:'patron',  avatar:'PT'},
+    ],
+    remeros:{
+      che:     {scores:[{l:'Técnica',p:85,c:'fg'},{l:'Sincronía',p:93,c:'fg'},{l:'Resistencia',p:78,c:'fg'},{l:'Amplitud',p:86,c:'fg'},{l:'Ciaboga',p:88,c:'fg'}],
+                phases:['chip-g','chip-g','chip-g','chip-g','chip-g'],
+                notes:'Mejora clara respecto a Pedregalejo. Reincorporación post-ciaboga más rápida. Mantiene ritmo en sprint.',
+                priority:'Consolidar la mejora en resistencia. Objetivo: cadencia sprint ≥33.',
+                evol:{ref:'che',label:'vs Pedregalejo',tipo:'up'}},
+      juan:    {scores:[{l:'Técnica',p:75,c:'fg'},{l:'Sincronía',p:78,c:'fg'},{l:'Resistencia',p:72,c:'fa'},{l:'Amplitud',p:70,c:'fa'},{l:'Ciaboga',p:74,c:'fa'}],
+                phases:['chip-g','chip-g','chip-a','chip-a','chip-a'],
+                notes:'Primera regata en B2. Buena técnica individual. Sincronía con el pacha sólida en la primera mitad.',
+                priority:'Trabajar la resistencia para mantener el nivel técnico en la segunda mitad.',
+                evol:{ref:null,label:'Primera regata',tipo:'new'}},
+      jcarlos: {scores:[{l:'Técnica',p:83,c:'fg'},{l:'Sincronía',p:85,c:'fg'},{l:'Resistencia',p:82,c:'fg'},{l:'Constancia',p:84,c:'fg'},{l:'Ciaboga',p:85,c:'fg'}],
+                phases:['chip-g','chip-g','chip-g','chip-g','chip-g'],
+                notes:'Se adapta bien al cambio de B2 a B3. Mantiene su nivel alto. Muy buen referente para la nueva alineación.',
+                priority:'Referente de consistencia. Puede tutorizar a Juan en B2.',
+                evol:{ref:'jcarlos',label:'vs Pedregalejo (B2→B3)',tipo:'same'}},
+      paco:    {scores:[{l:'Técnica',p:74,c:'fa'},{l:'Sincronía',p:75,c:'fa'},{l:'Resistencia',p:62,c:'fa'},{l:'Recobro',p:67,c:'fa'},{l:'Ciaboga',p:72,c:'fa'}],
+                phases:['chip-g','chip-a','chip-a','chip-a','chip-a'],
+                notes:'Leve mejora respecto a Pedregalejo pero sigue siendo el punto más débil en resistencia. El cambio a B4 no ha afectado negativamente.',
+                priority:'Continuar con programa de fuerza-resistencia. El objetivo es mantener el recobro largo en la segunda mitad.',
+                evol:{ref:'paco',label:'vs Pedregalejo (B3→B4)',tipo:'up'}},
+      patricio:{scores:[{l:'Técnica',p:78,c:'fg'},{l:'Sincronía',p:74,c:'fa'},{l:'Resistencia',p:76,c:'fg'},{l:'Reacción',p:72,c:'fa'},{l:'Ciaboga',p:70,c:'fa'}],
+                phases:['chip-g','chip-g','chip-a','chip-a','chip-a'],
+                notes:'Primera regata como marca. Mejor reacción a cambios de ritmo que Benjamín en Pedregalejo (~0.3 s de retardo). Margen de mejora en la segunda mitad.',
+                priority:'Sesiones dúo pacha–marca. Objetivo: retardo <0.2 s en toda la regata.',
+                evol:{ref:null,label:'Primera regata',tipo:'new'}},
+      benjamin:{scores:[{l:'Técnica',p:77,c:'fg'},{l:'Sincronía',p:78,c:'fg'},{l:'Resistencia',p:76,c:'fg'},{l:'Ángulo',p:68,c:'fa'},{l:'Ciaboga',p:72,c:'fa'}],
+                phases:['chip-g','chip-g','chip-a','chip-g','chip-g'],
+                notes:'Sin el rol de marca mejora notablemente su sincronía y técnica. El cambio de E1 a E2 le ha favorecido en esta regata.',
+                priority:'Consolidar la mejora técnica. El ángulo de ataque sigue siendo el punto a trabajar.',
+                evol:{ref:'benjamin',label:'vs Pedregalejo (E1→E2)',tipo:'up'}},
+      enrique: {scores:[{l:'Técnica',p:70,c:'fa'},{l:'Sincronía',p:68,c:'fa'},{l:'Resistencia',p:72,c:'fa'},{l:'Extracción',p:65,c:'fa'},{l:'Ciaboga',p:66,c:'fa'}],
+                phases:['chip-g','chip-a','chip-a','chip-a','chip-a'],
+                notes:'Primera regata. Nivel técnico aceptable. La extracción es el punto más débil: sale antes de completar el tirón.',
+                priority:'Trabajo de extracción: finalizar tirón hasta la cadera. Revisión en vídeo lateral.',
+                evol:{ref:null,label:'Primera regata',tipo:'new'}},
+      pedro:   {scores:[{l:'Gobierno',p:93,c:'fg'},{l:'Rumbo',p:95,c:'fg'},{l:'Ciaboga',p:90,c:'fg'},{l:'Comunicación',p:72,c:'fa'},{l:'Sprint',p:85,c:'fg'}],
+                phases:['chip-g','chip-g','chip-g','chip-g','chip-g'],
+                notes:'Ciaboga claramente mejor que en Pedregalejo: radio más ajustado, giro en ~12 s. Se incorpora a remar antes en el sprint. Comunicación verbal mejorada.',
+                priority:'Establecer señal verbal estándar pre-ciaboga para toda la temporada.',
+                evol:{ref:'pedro',label:'vs Pedregalejo',tipo:'up'}},
+    },
+    mejoras:[
+      {tipo:'pos',icon:'✅',ttl:'Conseguido: reaceleración 15 s',txt:'Objetivo cumplido. De 25 s a 15 s. El entrenamiento específico de ciaboga ha funcionado.'},
+      {tipo:'pos',icon:'✅',ttl:'Conseguido: ciaboga más rápida',txt:'20 s vs 25 s. Radio más ajustado y giro más decidido de Pedro.'},
+      {tipo:'pos',icon:'✅',ttl:'Conseguido: tumba sprint +6°',txt:'De 12° a 18°. La mejora en técnica bajo fatiga es visible. Objetivo: superar 20°.'},
+      {tipo:'neg',icon:'📐',ttl:'P1: Tumba sprint aún por debajo',txt:'18° vs objetivo de 20°. Continuar trabajo técnico en espejo bajo fatiga.'},
+      {tipo:'neg',icon:'🔄',ttl:'P2: Marca (Patricio) en transiciones',txt:'~0.3 s de retardo. Mejor que Benjamín en Pedregalejo pero aún por encima del objetivo <0.2 s.'},
+      {tipo:'tip',icon:'💬',ttl:'Comunicación verbal mejorada',txt:'Pedro más activo verbalmente en Huelin. Continuar con protocolo de señales en cada regata.'},
+    ],
   },
   // ← AÑADE AQUÍ LA SEMANA 3, 4…
 ];
 
-const ROWERS = [
-  {
-    id: 'pacha', name: 'Pacha', role: 'Marcador de ritmo', banda: 'babor',
-    pos: 'Popa babor · posición 1', avatar: 'PA',
-    scores: [
-      { label: 'Técnica',     pct: 82, cls: 'fg' },
-      { label: 'Sincronía',   pct: 92, cls: 'fg' },
-      { label: 'Resistencia', pct: 72, cls: 'fa' },
-      { label: 'Amplitud',    pct: 85, cls: 'fg' },
-      { label: 'Ciaboga',     pct: 80, cls: 'fp' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-g'},
-      {label:'Ciaboga',cls:'chip-p'},{label:'Reac.',cls:'chip-a'},{label:'Sprint',cls:'chip-g'}
-    ],
-    notes: 'Ritmo claro y firme. Buena amplitud de palada. En la reaceleración post-ciaboga tarda ~5 s en retomar el ritmo de crucero — es el punto a pulir. Referencia visible para toda la tripulación.',
-    priority: 'Entrenar la primera palada tras la ciaboga como acción refleja: en cuanto la boya queda atrás, palada fuerte inmediata sin esperar a recolocarse del todo.',
-  },
-  {
-    id: 'marca', name: 'Marca', role: 'Referencia estribor', banda: 'estribor',
-    pos: 'Proa estribor · posición 1E', avatar: 'MA',
-    scores: [
-      { label: 'Técnica',     pct: 76, cls: 'fg' },
-      { label: 'Sincronía',   pct: 65, cls: 'fa' },
-      { label: 'Resistencia', pct: 74, cls: 'fa' },
-      { label: 'Reacción',    pct: 60, cls: 'fa' },
-      { label: 'Ciaboga',     pct: 62, cls: 'fa' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-g'},
-      {label:'Ciaboga',cls:'chip-a'},{label:'Reac.',cls:'chip-a'},{label:'Sprint',cls:'chip-a'}
-    ],
-    notes: 'Buena lectura en condiciones estables. En cambios de ritmo y especialmente tras la ciaboga, el retardo respecto al pacha se hace más evidente (~0.5 s). Arrastra al resto de estribor.',
-    priority: 'Sesiones específicas dúo pacha–marca para reducir el tiempo de reacción a &lt;0.2 s. Especial foco en la primera palada post-ciaboga.',
-  },
-  {
-    id: 'b2', name: 'Babor 2', role: 'Remero', banda: 'babor',
-    pos: '2.ª posición babor', avatar: 'B2',
-    scores: [
-      { label: 'Técnica',    pct: 84, cls: 'fg' },
-      { label: 'Sincronía',  pct: 88, cls: 'fg' },
-      { label: 'Resistencia',pct: 80, cls: 'fg' },
-      { label: 'Constancia', pct: 86, cls: 'fg' },
-      { label: 'Ciaboga',    pct: 82, cls: 'fg' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-g'},
-      {label:'Ciaboga',cls:'chip-g'},{label:'Reac.',cls:'chip-g'},{label:'Sprint',cls:'chip-g'}
-    ],
-    notes: 'Remero más consistente del vídeo. Mantiene postura y extensión incluso en la segunda mitad. Se reincorpora rápido tras la ciaboga. Buena referencia interna para babor.',
-    priority: 'Mantener el nivel. Puede asumir mayor liderazgo de ritmo si el pacha decae en futuras regatas.',
-  },
-  {
-    id: 'e2', name: 'Estribor 2', role: 'Remero', banda: 'estribor',
-    pos: '2.ª posición estribor', avatar: 'E2',
-    scores: [
-      { label: 'Técnica',    pct: 70, cls: 'fa' },
-      { label: 'Sincronía',  pct: 64, cls: 'fa' },
-      { label: 'Resistencia',pct: 68, cls: 'fa' },
-      { label: 'Ángulo',     pct: 55, cls: 'fr' },
-      { label: 'Ciaboga',    pct: 60, cls: 'fa' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-a'},
-      {label:'Ciaboga',cls:'chip-a'},{label:'Reac.',cls:'chip-r'},{label:'Sprint',cls:'chip-a'}
-    ],
-    notes: 'El ángulo de ataque cae progresivamente en la segunda mitad: hombros altos, remo más vertical. La reincorporación tras la ciaboga es la más lenta de estribor, acentuando el retardo del marca.',
-    priority: 'Trabajo técnico prioritario: extensión hacia proa en posición de agarre. Grabación lateral para detectar el momento exacto de la pérdida de ángulo.',
-  },
-  {
-    id: 'b3', name: 'Babor 3', role: 'Remero', banda: 'babor',
-    pos: '3.ª posición babor · centro', avatar: 'B3',
-    scores: [
-      { label: 'Técnica',    pct: 72, cls: 'fa' },
-      { label: 'Sincronía',  pct: 74, cls: 'fa' },
-      { label: 'Resistencia',pct: 55, cls: 'fr' },
-      { label: 'Recobro',    pct: 63, cls: 'fa' },
-      { label: 'Ciaboga',    pct: 70, cls: 'fa' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-a'},
-      {label:'Ciaboga',cls:'chip-a'},{label:'Reac.',cls:'chip-a'},{label:'Sprint',cls:'chip-a'}
-    ],
-    notes: 'Posición central, acusa fatiga precoz: el recobro se acorta a partir del min 2 y los hombros suben bajo esfuerzo. En la fase de vuelta (post-ciaboga) es visible la pérdida de amplitud.',
-    priority: 'Programa específico de fuerza-resistencia fuera del agua (jalones, remo en ergo 4×4 min). Series largas en el agua priorizando calidad técnica sobre velocidad.',
-  },
-  {
-    id: 'e3', name: 'Estribor 3', role: 'Remero', banda: 'estribor',
-    pos: '3.ª posición estribor · centro', avatar: 'E3',
-    scores: [
-      { label: 'Técnica',    pct: 62, cls: 'fa' },
-      { label: 'Sincronía',  pct: 60, cls: 'fa' },
-      { label: 'Extracción', pct: 50, cls: 'fr' },
-      { label: 'Resistencia',pct: 65, cls: 'fa' },
-      { label: 'Ciaboga',    pct: 58, cls: 'fa' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-a'},
-      {label:'Ciaboga',cls:'chip-a'},{label:'Reac.',cls:'chip-r'},{label:'Sprint',cls:'chip-a'}
-    ],
-    notes: 'El remo sale antes de completar el tirón — pérdida de energía en la extracción. Este defecto es más pronunciado en la segunda mitad y se agrava tras la ciaboga. Visibilidad parcial por ángulo de cámara.',
-    priority: 'Trabajo de extracción: finalizar el tirón hasta la cadera antes de sacar. Ejercicios de paladas cortas para sentir el final del recorrido. Revisión en vídeo lateral.',
-  },
-  {
-    id: 'b4', name: 'Babor 4', role: 'Remero', banda: 'babor',
-    pos: 'Proa babor · posición 4', avatar: 'B4',
-    scores: [
-      { label: 'Técnica',    pct: 78, cls: 'fg' },
-      { label: 'Sincronía',  pct: 72, cls: 'fa' },
-      { label: 'Resistencia',pct: 70, cls: 'fa' },
-      { label: 'Sprint',     pct: 67, cls: 'fa' },
-      { label: 'Ciaboga',    pct: 75, cls: 'fp' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-g'},
-      {label:'Ciaboga',cls:'chip-p'},{label:'Reac.',cls:'chip-a'},{label:'Sprint',cls:'chip-a'}
-    ],
-    notes: 'Buena primera mitad con técnica correcta. A partir del min 2 pierde coordinación con el pacha, especialmente en el sprint. La fatiga se traduce en pérdida de sincronía más que de técnica individual.',
-    priority: 'Series de seguimiento del ritmo bajo fatiga: 3×3 min a ritmo de carrera. Foco en mantener el timing de entrada en el último minuto.',
-  },
-  {
-    id: 'patron', name: 'Patrón', role: 'Gobierno · timón', banda: 'patron',
-    pos: 'Popa · espailla', avatar: 'PT',
-    scores: [
-      { label: 'Gobierno',      pct: 92, cls: 'fg' },
-      { label: 'Rumbo',         pct: 95, cls: 'fg' },
-      { label: 'Ciaboga',       pct: 85, cls: 'fp' },
-      { label: 'Comunicación',  pct: 62, cls: 'fa' },
-      { label: 'Sprint',        pct: 80, cls: 'fg' },
-    ],
-    phases: [
-      {label:'Ida',cls:'chip-g'},{label:'Desarrollo',cls:'chip-g'},
-      {label:'Ciaboga',cls:'chip-p'},{label:'Reac.',cls:'chip-a'},{label:'Sprint',cls:'chip-g'}
-    ],
-    notes: 'Gestión de espailla sobresaliente: rumbo recto en toda la regata, sin correcciones bruscas. La ciaboga es limpia y bien ejecutada — la boya se bordea ajustada y la barca sale bien orientada. Comunicación verbal no perceptible en vídeo.',
-    priority: 'Establecer protocolo verbal en tres momentos: (1) aviso pre-ciaboga para preparar el giro, (2) "¡ya!" al inicio de reaceleración, (3) señal de sprint en 3:00.',
-  },
-];
+// ═══════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════
+let currentRace = RACES.length - 1; // mostrar última por defecto
 
-// ─── RENDER ROWERS ──────────────────────────────────────
-function buildCard(r) {
-  const bCls = {babor:'bb-babor',estribor:'bb-estribor',patron:'bb-patron'}[r.banda];
-  const avCls = {babor:'av-babor',estribor:'av-estribor',patron:'av-patron'}[r.banda];
-  const bandLabel = {babor:'BABOR',estribor:'ESTRIBOR',patron:'PATRÓN'}[r.banda];
-
-  const scoresH = r.scores.map(s=>`
-    <div class="score-row">
-      <div class="score-label">${s.label}</div>
-      <div class="score-bg"><div class="score-fill ${s.cls}" style="width:${s.pct}%" data-w="${s.pct}"></div></div>
-      <div class="score-pct">${s.pct}%</div>
-    </div>`).join('');
-
-  const phasesH = r.phases.map(p=>`<span class="chip ${p.cls}">${p.label}</span>`).join('');
-
-  return `<div class="rower-card">
-    <div class="rower-header">
-      <div class="rower-avatar ${avCls}">${r.avatar}</div>
-      <div><div class="rower-name">${r.name}</div><div class="rower-sub">${r.pos}</div></div>
-      <span class="band-badge ${bCls}">${bandLabel}</span>
-    </div>
-    <div class="rower-body">
-      ${scoresH}
-      <div class="phase-chips">${phasesH}</div>
-      <div class="note-box mt16">
-        <div class="note-ttl">Observaciones</div>
-        <div class="note-txt">${r.notes}</div>
-      </div>
-      <div class="priority-box">
-        <div class="note-ttl">→ Entrenamiento</div>
-        <div class="note-txt">${r.priority}</div>
-      </div>
-    </div>
-  </div>`;
+// ═══════════════════════════════════════════════════
+// RENDER RACE SELECTOR
+// ═══════════════════════════════════════════════════
+function renderSelector() {
+  document.getElementById('race-selector').innerHTML = RACES.map((r,i) => `
+    <button class="race-btn ${i===currentRace?'active':''}" onclick="selectRace(${i})">
+      ${r.nombre}
+      <span class="race-btn-date">${r.date} · ${r.pos}.º/${r.total}</span>
+    </button>`).join('');
 }
-document.getElementById('rower-grid').innerHTML = ROWERS.map(buildCard).join('');
 
-// ─── RENDER HISTÓRICO ────────────────────────────────────
+function selectRace(idx) {
+  currentRace = idx;
+  renderSelector();
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER ALL PANELS FOR CURRENT RACE
+// ═══════════════════════════════════════════════════
+function renderAll() {
+  const r = RACES[currentRace];
+  renderResumen(r);
+  renderCadencia(r);
+  renderCiaboga(r);
+  renderRemeros(r);
+  renderMejoras(r);
+  // historico is race-independent
+}
+
+// ── RESUMEN ─────────────────────────────────────────
+function renderResumen(r) {
+  const prev = currentRace > 0 ? RACES[currentRace-1] : null;
+  const difTag = prev ? `<span style="font-size:11px;color:${r.difLider<prev.difLider?'#1d8a5e':'#d85a30'}">${r.difLider<prev.difLider?'↓':'↑'} vs anterior</span>` : '';
+  document.getElementById('panel-resumen').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card accent"><div class="stat-lbl">Tiempo oficial</div><div class="stat-val">${r.tiempoOficial}</div><div class="stat-unit">${r.nombre}</div></div>
+      <div class="stat-card"><div class="stat-lbl">Tiempo real</div><div class="stat-val">${r.tiempoReal}</div><div class="stat-unit">sin pre/post</div></div>
+      <div class="stat-card"><div class="stat-lbl">Dif. con 1.º</div><div class="stat-val" style="color:${r.difLider<5?'#1d8a5e':'var(--coral)'}">+${r.difLider}s</div><div class="stat-unit">${difTag}</div></div>
+      <div class="stat-card"><div class="stat-lbl">Cadencia media</div><div class="stat-val">${r.cadMedia}</div><div class="stat-unit">pal/min</div></div>
+      <div class="stat-card"><div class="stat-lbl">Cadencia máx.</div><div class="stat-val" style="color:#1d8a5e">${r.cadMax}</div><div class="stat-unit">pal/min · salida</div></div>
+      <div class="stat-card gold-c"><div class="stat-lbl">Vel/palada</div><div class="stat-val">${r.velPalada}</div><div class="stat-unit">metros · media</div></div>
+    </div>
+    <div class="card mb16">
+      <div class="sec-lbl">Fases · ${r.tiempoReal}</div>
+      <div class="phase-bar">${r.fases.map(f=>`<div class="ph" style="background:${f.col};flex:${f.flex}"><span>${f.nombre}</span><span class="ph-sub">${f.t}</span></div>`).join('')}</div>
+      <div class="phase-legend">${r.fases.map(f=>`<span><span class="pl-dot" style="background:${f.col}"></span>${f.nombre}${f.cad?` · ${f.cad} p/m`:' · ciaboga'}</span>`).join('')}</div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="sec-lbl">Puntos fuertes</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          ${r.mejoras.filter(m=>m.tipo==='pos').map(m=>`<div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span><b>${m.ttl}</b> — ${m.txt}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-lbl">A mejorar</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          ${r.mejoras.filter(m=>m.tipo==='neg'||m.tipo==='cib').map(m=>`<div style="display:flex;gap:10px;font-size:13px;line-height:1.6"><span style="color:#D85A30;flex-shrink:0">✗</span><span><b>${m.ttl}</b> — ${m.txt}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── CADENCIA ─────────────────────────────────────────
+function renderCadencia(r) {
+  const phases = r.fases.filter(f=>f.cad);
+  const maxC = Math.max(...phases.map(f=>f.cad));
+  const minC = Math.min(...phases.map(f=>f.cad)) - 2;
+
+  // build bar chart data
+  const barCols = ['#185FA5','#1D9E75','#0f7a8a','#993C1D'];
+  const phaseLabels = r.fases.filter(f=>f.cad);
+  const barW = 50, gap = 30, groupW = barW*3+gap;
+  const chartW = 680, chartH = 180, padL=50, padB=40, padT=20;
+  const plotH = chartH - padT - padB;
+  const scaleC = v => padT + plotH - (v - minC)/(maxC - minC + 2)*plotH;
+  const scaleTumba = v => padT + plotH - v/35*plotH;
+  const scaleVel = v => padT + plotH - (v-5.5)/2.5*plotH;
+  const groups = phaseLabels.length;
+  const totalW = groups * groupW + (groups-1)*20 + padL + 40;
+  const xPos = (i, b) => padL + i*(groupW+20) + b*(barW+4);
+
+  document.getElementById('panel-cadencia').innerHTML = `
+    <div class="card mb16">
+      <div class="sec-lbl">Gráfico A · Cadencia, tumba y vel/palada por fase · líneas</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;font-size:12px;color:var(--text2)">
+        <span style="display:flex;align-items:center;gap:5px"><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#1a6b8a" stroke-width="2.5"/></svg>Cadencia</span>
+        <span style="display:flex;align-items:center;gap:5px"><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#e8a020" stroke-width="2.5"/></svg>Tumba (°)</span>
+        <span style="display:flex;align-items:center;gap:5px"><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#1d8a5e" stroke-width="2" stroke-dasharray="5 3"/></svg>Vel/palada</span>
+        <span style="display:flex;align-items:center;gap:5px"><svg width="14" height="8"><rect width="14" height="8" fill="#7b52a8" opacity="0.15"/></svg>Ciaboga</span>
+      </div>
+      <div class="chart-area">
+        <svg width="100%" viewBox="0 0 700 220">
+          ${buildLineChart(r)}
+        </svg>
+      </div>
+      <p style="font-size:11px;color:var(--text3)">Estimación visual a 2 fps. Línea discontinua = ciaboga. Eje izq: pal/min · Eje der: grados.</p>
+    </div>
+    <div class="card mb16">
+      <div class="sec-lbl">Gráfico B · Comparativa por fases · barras agrupadas</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;font-size:12px;color:var(--text2)">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#1a6b8a;display:inline-block"></span>Cadencia</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#e8a020;display:inline-block"></span>Tumba (°)</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#1d8a5e;display:inline-block"></span>Vel/palada (m)</span>
+      </div>
+      <div class="chart-area" style="overflow-x:auto">
+        <svg width="100%" viewBox="0 0 680 220">
+          ${buildBarChart(r)}
+        </svg>
+      </div>
+    </div>
+    <div class="stat-grid">
+      ${r.fases.map(f=>f.cad?`<div class="stat-card"><div class="stat-lbl">${f.nombre}</div><div class="stat-val" style="color:${f.col}">${f.cad}</div><div class="stat-unit">p/m · tumba ${f.tumba}°</div></div>`:`<div class="stat-card" style="background:#f3eeff;border-color:rgba(123,82,168,0.2)"><div class="stat-lbl">Ciaboga</div><div class="stat-val" style="color:#7b52a8">~${r.ciabogaDur}s</div><div class="stat-unit">paladas asimétricas</div></div>`).join('')}
+    </div>`;
+}
+
+function buildLineChart(r) {
+  const phases = r.fases.filter(f=>f.cad);
+  const n = phases.length;
+  const W=700,H=200,pL=58,pR=22,pT=20,pB=30;
+  const pw=W-pL-pR, ph=H-pT-pB;
+  const xs = phases.map((_,i)=>pL+i*pw/(n-1));
+  const maxC=Math.max(...phases.map(f=>f.cad))+2;
+  const minC=Math.min(...phases.map(f=>f.cad))-2;
+  const yC = v => pT+ph-(v-minC)/(maxC-minC)*ph;
+  const yT = v => pT+ph-v/35*ph;
+  const yV = v => pT+ph-(v-5.5)/2.5*ph;
+
+  // find ciaboga index
+  const ciabIdx = r.fases.findIndex(f=>!f.cad);
+  const preFases = r.fases.slice(0,ciabIdx).filter(f=>f.cad);
+  const postFases = r.fases.slice(ciabIdx+1).filter(f=>f.cad);
+  const allFases = r.fases;
+
+  // x positions for all fases including ciaboga
+  const allX = allFases.map((_,i)=>pL+i*pw/(allFases.length-1));
+  const cadPts  = allFases.map((f,i)=>f.cad?`${allX[i]},${yC(f.cad)}`:null).filter(Boolean);
+  const tumbPts = allFases.map((f,i)=>f.tumba?`${allX[i]},${yT(f.tumba)}`:null).filter(Boolean);
+  const velPts  = allFases.map((f,i)=>f.vel?`${allX[i]},${yV(f.vel)}`:null).filter(Boolean);
+
+  // split at ciaboga
+  const preCad  = allFases.slice(0,ciabIdx).filter(f=>f.cad).map((f,_,a)=>{const i=allFases.indexOf(f);return `${allX[i]},${yC(f.cad)}`;});
+  const postCad = allFases.slice(ciabIdx+1).filter(f=>f.cad).map(f=>{const i=allFases.indexOf(f);return `${allX[i]},${yC(f.cad)}`;});
+  const ciabX   = allX[ciabIdx];
+  const prevCad = allFases[ciabIdx-1]; const nextCad = allFases[ciabIdx+1];
+
+  let svg = `<defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a6b8a" stop-opacity="0.12"/><stop offset="100%" stop-color="#1a6b8a" stop-opacity="0"/></linearGradient></defs>`;
+  // grid
+  svg += `<line x1="${pL}" y1="${pT}" x2="${W-pR}" y2="${pT}" stroke="#d0e4ec" stroke-width="0.5"/>`;
+  svg += `<line x1="${pL}" y1="${pT+ph/2}" x2="${W-pR}" y2="${pT+ph/2}" stroke="#d0e4ec" stroke-width="0.5"/>`;
+  svg += `<line x1="${pL}" y1="${pT+ph}" x2="${W-pR}" y2="${pT+ph}" stroke="#d0e4ec" stroke-width="0.8"/>`;
+  // ciaboga zone
+  svg += `<rect x="${allX[ciabIdx]-15}" y="${pT}" width="30" height="${ph}" fill="#7b52a8" opacity="0.07" rx="3"/>`;
+  svg += `<text x="${allX[ciabIdx]}" y="${pT-4}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#7b52a8">CIABOGA</text>`;
+  // phase labels
+  allFases.forEach((f,i)=>{
+    svg += `<text x="${allX[i]}" y="${H-pB+14}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="${f.cad?f.col:'#7b52a8'}">${f.t}</text>`;
+    svg += `<text x="${allX[i]}" y="${H-pB+24}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8aabb8">${f.nombre}</text>`;
+  });
+  // Y labels
+  svg += `<text x="${pL-5}" y="${yC(maxC-2)+4}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a">${maxC-2}</text>`;
+  svg += `<text x="${pL-5}" y="${yC(minC+2)+4}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#1a6b8a">${minC+2}</text>`;
+  svg += `<text x="${W-pR+4}" y="${yT(35)+4}" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020">35°</text>`;
+  svg += `<text x="${W-pR+4}" y="${yT(0)+4}" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020">0°</text>`;
+  // cadencia lines
+  if(preCad.length>1) svg += `<polyline points="${preCad.join(' ')}" fill="none" stroke="#1a6b8a" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if(postCad.length>1) svg += `<polyline points="${postCad.join(' ')}" fill="none" stroke="#1a6b8a" stroke-width="2.5" stroke-linejoin="round"/>`;
+  // ciaboga dashed bridge
+  if(prevCad&&nextCad) svg += `<polyline points="${allX[ciabIdx-1]},${yC(prevCad.cad)} ${allX[ciabIdx]},${yC(23)} ${allX[ciabIdx+1]},${yC(nextCad.cad)}" fill="none" stroke="#7b52a8" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  // tumba line
+  const tumbPre  = allFases.slice(0,ciabIdx).filter(f=>f.tumba).map(f=>`${allX[allFases.indexOf(f)]},${yT(f.tumba)}`);
+  const tumbPost = allFases.slice(ciabIdx+1).filter(f=>f.tumba).map(f=>`${allX[allFases.indexOf(f)]},${yT(f.tumba)}`);
+  if(tumbPre.length>1)  svg += `<polyline points="${tumbPre.join(' ')}" fill="none" stroke="#e8a020" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if(tumbPost.length>1) svg += `<polyline points="${tumbPost.join(' ')}" fill="none" stroke="#e8a020" stroke-width="2.5" stroke-linejoin="round"/>`;
+  // vel line
+  const velPre  = allFases.slice(0,ciabIdx).filter(f=>f.vel).map(f=>`${allX[allFases.indexOf(f)]},${yV(f.vel)}`);
+  const velPost = allFases.slice(ciabIdx+1).filter(f=>f.vel).map(f=>`${allX[allFases.indexOf(f)]},${yV(f.vel)}`);
+  if(velPre.length>1)  svg += `<polyline points="${velPre.join(' ')}" fill="none" stroke="#1d8a5e" stroke-width="2" stroke-dasharray="6 3" stroke-linejoin="round"/>`;
+  if(velPost.length>1) svg += `<polyline points="${velPost.join(' ')}" fill="none" stroke="#1d8a5e" stroke-width="2" stroke-dasharray="6 3" stroke-linejoin="round"/>`;
+  // dots + labels
+  allFases.forEach((f,i)=>{
+    if(f.cad){
+      svg += `<circle cx="${allX[i]}" cy="${yC(f.cad)}" r="4.5" fill="${f.col}" stroke="white" stroke-width="1.5"/>`;
+      svg += `<text x="${allX[i]}" y="${yC(f.cad)-8}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="${f.col}" font-weight="600">${f.cad}</text>`;
+    }
+    if(f.tumba){
+      svg += `<circle cx="${allX[i]}" cy="${yT(f.tumba)}" r="4" fill="#e8a020" stroke="white" stroke-width="1.5"/>`;
+      svg += `<text x="${allX[i]+12}" y="${yT(f.tumba)+4}" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020" font-weight="600">${f.tumba}°</text>`;
+    }
+    if(f.vel){
+      svg += `<circle cx="${allX[i]}" cy="${yV(f.vel)}" r="3.5" fill="#1d8a5e" stroke="white" stroke-width="1.5"/>`;
+    }
+  });
+  return svg;
+}
+
+function buildBarChart(r) {
+  const phases = r.fases.filter(f=>f.cad);
+  const n = phases.length;
+  const W=680,H=200,pL=40,pB=50,pT=20;
+  const ph=H-pT-pB;
+  const groupW = Math.floor((W-pL-20)/n);
+  const bw = Math.floor(groupW/3)-4;
+  const maxC=Math.max(...phases.map(f=>f.cad));
+  const maxT=35;
+  const maxV=8;
+
+  let svg = '';
+  svg += `<line x1="${pL}" y1="${H-pB}" x2="${W-10}" y2="${H-pB}" stroke="#8aabb8" stroke-width="0.8"/>`;
+
+  phases.forEach((f,i)=>{
+    const gx = pL + i*groupW;
+    const hC = (f.cad/maxC)*ph;
+    const hT = (f.tumba/maxT)*ph;
+    const hV = (f.vel/maxV)*ph;
+    const x0=gx+4, x1=gx+bw+8, x2=gx+bw*2+12;
+
+    svg += `<rect x="${x0}" y="${H-pB-hC}" width="${bw}" height="${hC}" rx="3" fill="${f.col}" opacity="0.9"/>`;
+    svg += `<text x="${x0+bw/2}" y="${H-pB-hC-4}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="${f.col}" font-weight="600">${f.cad}</text>`;
+
+    svg += `<rect x="${x1}" y="${H-pB-hT}" width="${bw}" height="${hT}" rx="3" fill="#e8a020" opacity="0.85"/>`;
+    svg += `<text x="${x1+bw/2}" y="${H-pB-hT-4}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#e8a020" font-weight="600">${f.tumba}°</text>`;
+
+    svg += `<rect x="${x2}" y="${H-pB-hV}" width="${bw}" height="${hV}" rx="3" fill="#1d8a5e" opacity="0.7"/>`;
+    svg += `<text x="${x2+bw/2}" y="${H-pB-hV-4}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#1d8a5e" font-weight="600">${f.vel}</text>`;
+
+    svg += `<text x="${gx+groupW/2-4}" y="${H-pB+13}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="${f.col}">${f.nombre}</text>`;
+    svg += `<text x="${gx+groupW/2-4}" y="${H-pB+23}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8aabb8">${f.t}</text>`;
+  });
+  return svg;
+}
+
+// ── CIABOGA ──────────────────────────────────────────
+function renderCiaboga(r) {
+  document.getElementById('panel-ciaboga').innerHTML = `
+    <div class="ciab-grid">
+      <div class="ciab-metric"><div class="stat-lbl">Duración ciaboga</div><div class="stat-val">~${r.ciabogaDur}s</div><div class="stat-unit">giro completo</div></div>
+      <div class="ciab-metric"><div class="stat-lbl">Reaceleración</div><div class="stat-val">~${r.reaceleracion}s</div><div class="stat-unit">hasta crucero</div></div>
+      <div class="ciab-metric"><div class="stat-lbl">Impacto total</div><div class="stat-val">~${r.ciabogaDur+r.reaceleracion}s</div><div class="stat-unit">en cadencia</div></div>
+    </div>
+    <div class="card mb16">
+      <div class="sec-lbl">Secuencia fotograma a fotograma</div>
+      <div>
+        ${r.ciabogaSteps.map(s=>`
+        <div class="ciab-step">
+          <div class="ciab-time">${s.t}</div>
+          <div class="ciab-dot" style="background:${s.col}"></div>
+          <div class="ciab-text">${s.txt}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="sec-lbl">Valoración técnica</div>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;line-height:1.6">
+          <div style="display:flex;gap:10px"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span>Radio de giro ajustado. Pedro conoce el punto exacto de inicio.</span></div>
+          <div style="display:flex;gap:10px"><span style="color:#1D8A5E;flex-shrink:0">✓</span><span>Barca bien orientada a la primera. Sin correcciones adicionales post-giro.</span></div>
+          <div style="display:flex;gap:10px"><span style="color:${r.reaceleracion<=15?'#1D8A5E':'#D85A30'};flex-shrink:0">${r.reaceleracion<=15?'✓':'✗'}</span><span>Reaceleración: ${r.reaceleracion} s ${r.reaceleracion<=15?'✅ Objetivo cumplido':'⚠️ Objetivo: <15 s'}.</span></div>
+        </div>
+      </div>
+      <div class="card" style="background:#f3eeff;border-color:rgba(123,82,168,0.2)">
+        <div class="sec-lbl" style="color:#7b52a8">Recordatorio</div>
+        <div style="font-size:13px;color:#4a3a6a;line-height:1.65">La caída de cadencia durante la ciaboga es <b>normal y esperada</b> — no refleja fatiga del equipo. Lo que importa es la velocidad de reaceleración post-giro.</div>
+        <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;color:#7b52a8">Objetivo temporada: ciaboga + reaceleración ≤ 35 s<br>Esta regata: ${r.ciabogaDur+r.reaceleracion} s ${r.ciabogaDur+r.reaceleracion<=35?'✅':'⚠️'}</div>
+      </div>
+    </div>`;
+}
+
+// ── REMEROS ──────────────────────────────────────────
+function renderRemeros(r) {
+  const cards = r.alineacion.map(a => {
+    const data = r.remeros[a.id];
+    if(!data) return '';
+    const avCls = {babor:'av-babor',estribor:'av-estribor',patron:'av-patron'}[a.banda];
+    const bbCls = {babor:'bb-babor',estribor:'bb-estribor',patron:'bb-patron'}[a.banda];
+    const bandLabel = {babor:'BABOR',estribor:'ESTRIBOR',patron:'PATRÓN'}[a.banda];
+    const phLabels = ['Ida','Desarrollo','Ciaboga','Reac.','Sprint'];
+    const scores = data.scores.map(s=>`
+      <div class="score-row">
+        <div class="score-label">${s.l}</div>
+        <div class="score-bg"><div class="score-fill ${s.c}" style="width:${s.p}%" data-w="${s.p}"></div></div>
+        <div class="score-pct">${s.p}%</div>
+      </div>`).join('');
+    const chips = data.phases.map((c,i)=>`<span class="chip ${c}">${phLabels[i]}</span>`).join('');
+
+    // evol badge
+    let evolBadge = '';
+    if(data.evol) {
+      const eCls = {up:'evol-up',down:'evol-down',same:'evol-same',new:'evol-new'}[data.evol.tipo];
+      const eIcon = {up:'↑',down:'↓',same:'→',new:'★'}[data.evol.tipo];
+      evolBadge = `<span class="evol-badge ${eCls}">${eIcon} ${data.evol.label}</span>`;
+    }
+
+    return `<div class="rower-card">
+      <div class="rower-header">
+        <div class="rower-avatar ${avCls}">${a.avatar}</div>
+        <div><div class="rower-name">${a.nombre}</div><div class="rower-sub">${a.pos}</div></div>
+        <span class="band-badge ${bbCls}">${bandLabel}</span>
+      </div>
+      <div class="rower-body">
+        ${scores}
+        ${evolBadge}
+        <div class="phase-chips">${chips}</div>
+        <div class="note-box mt16"><div class="note-ttl">Observaciones</div><div class="note-txt">${data.notes}</div></div>
+        <div class="priority-box"><div class="note-ttl">→ Entrenamiento</div><div class="note-txt">${data.priority}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('panel-remeros').innerHTML = `<div class="rower-grid">${cards}</div>`;
+}
+
+// ── MEJORAS ──────────────────────────────────────────
+function renderMejoras(r) {
+  document.getElementById('panel-mejoras').innerHTML = `
+    <div class="mej-grid">
+      ${r.mejoras.map(m=>`
+      <div class="mej-card ${m.tipo}">
+        <div class="mej-icon">${m.icon}</div>
+        <div class="mej-ttl">${m.ttl}</div>
+        <div class="mej-txt">${m.txt}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="sec-lbl">Plan de trabajo</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;font-size:12.5px;color:var(--text2);line-height:1.8">
+        <div><b style="color:var(--sea);font-size:13px">Próximas 2 semanas</b><br>
+        ${r.mejoras.filter(m=>m.tipo==='neg'||m.tipo==='cib').map(m=>`· ${m.ttl.replace(/P\d: /,'')}`).join('<br>')}</div>
+        <div><b style="color:var(--sea);font-size:13px">Mantener siempre</b><br>
+        ${r.mejoras.filter(m=>m.tipo==='pos').map(m=>`· ${m.ttl.replace('Mantener: ','').replace('Conseguido: ','')}`).join('<br>')}</div>
+      </div>
+    </div>`;
+}
+
+// ── HISTÓRICO ─────────────────────────────────────────
 const METRICS_CFG = {
-  difLider:      { label:'Diferencia con 1.º (s)', unit:'s',  color:'#993C1D', lowerBetter:true  },
-  cadMedia:      { label:'Cadencia media (pal/min)', unit:'',  color:'#1a6b8a', lowerBetter:false },
-  ciabogaDur:    { label:'Ciaboga (s)',             unit:'s',  color:'#7b52a8', lowerBetter:true  },
-  reaceleracion: { label:'Reaceleración (s)',        unit:'s',  color:'#0f7a8a', lowerBetter:true  },
-  tumbaSprint:   { label:'Tumba sprint (°)',         unit:'°',  color:'#e8a020', lowerBetter:false },
-  velPalada:     { label:'Vel/palada (m)',            unit:'m',  color:'#1d8a5e', lowerBetter:false },
+  difLider:      {label:'Diferencia con 1.º (s)', unit:'s', color:'#993C1D', lowerBetter:true},
+  cadMedia:      {label:'Cadencia media',          unit:'',  color:'#1a6b8a', lowerBetter:false},
+  ciabogaDur:    {label:'Ciaboga (s)',              unit:'s', color:'#7b52a8', lowerBetter:true},
+  reaceleracion: {label:'Reaceleración (s)',         unit:'s', color:'#0f7a8a', lowerBetter:true},
+  tumbaSprint:   {label:'Tumba sprint (°)',          unit:'°', color:'#e8a020', lowerBetter:false},
+  velPalada:     {label:'Vel/palada (m)',             unit:'m', color:'#1d8a5e', lowerBetter:false},
 };
-
 let currentMetric = 'difLider';
 
 function selectMetric(btn, metric) {
@@ -1282,117 +743,100 @@ function selectMetric(btn, metric) {
 
 function buildEvolChart(metric) {
   const cfg = METRICS_CFG[metric];
-  const vals = RACES.map(r => r[metric]);
-  const maxV = Math.max(...vals);
-  const minV = Math.min(...vals);
-  const range = maxV - minV || 1;
-  const W = 600, H = 130, padL = 50, padR = 20, padT = 20, padB = 30;
-  const plotW = W - padL - padR;
-  const plotH = H - padT - padB;
-  const xStep = RACES.length > 1 ? plotW / (RACES.length - 1) : plotW / 2;
+  const vals = RACES.map(r=>r[metric]);
+  const maxV = Math.max(...vals), minV = Math.min(...vals);
+  const range = maxV-minV||1;
+  const W=620,H=140,pL=50,pR=20,pT=22,pB=38;
+  const pw=W-pL-pR, ph=H-pT-pB;
+  const xPos = i => pL + (RACES.length>1 ? i*pw/(RACES.length-1) : pw/2);
+  const yScale = v => pT+ph-((v-minV)/range)*ph;
 
-  const yScale = v => padT + plotH - ((v - minV) / range) * plotH;
-  const xPos   = i => padL + (RACES.length > 1 ? i * xStep : plotW / 2);
+  const points = RACES.map((r,i)=>`${xPos(i)},${yScale(r[metric])}`).join(' ');
+  const area = `${xPos(0)},${H-pB} ${points} ${xPos(RACES.length-1)},${H-pB}`;
 
-  const points = RACES.map((r,i) => `${xPos(i)},${yScale(r[metric])}`).join(' ');
-  const area   = `${xPos(0)},${H-padB} ${points} ${xPos(RACES.length-1)},${H-padB}`;
-
-  const dots = RACES.map((r,i) => {
+  const dots = RACES.map((r,i)=>{
     const prev = RACES[i-1];
-    const improved = prev ? (cfg.lowerBetter ? r[metric] < prev[metric] : r[metric] > prev[metric]) : null;
-    const dotColor = improved === null ? cfg.color : improved ? '#1d8a5e' : '#d85a30';
-    return `<circle cx="${xPos(i)}" cy="${yScale(r[metric])}" r="5" fill="${dotColor}" stroke="white" stroke-width="1.5"/>
-            <text x="${xPos(i)}" y="${yScale(r[metric])-9}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="${dotColor}" font-weight="600">${r[metric]}${cfg.unit}</text>`;
+    const imp = prev ? (cfg.lowerBetter ? r[metric]<prev[metric] : r[metric]>prev[metric]) : null;
+    const dc = imp===null ? cfg.color : imp ? '#1d8a5e' : '#d85a30';
+    return `<circle cx="${xPos(i)}" cy="${yScale(r[metric])}" r="5" fill="${dc}" stroke="white" stroke-width="1.5"/>
+            <text x="${xPos(i)}" y="${yScale(r[metric])-9}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="${dc}" font-weight="600">${r[metric]}${cfg.unit}</text>`;
   }).join('');
 
-  const xlbls = RACES.map((r,i) => `
-    <text x="${xPos(i)}" y="${H-padB+14}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">Sem.${r.week}</text>
-    <text x="${xPos(i)}" y="${H-padB+24}" text-anchor="middle" font-family="'DM Sans',monospace" font-size="8" fill="#b0c8d4">${r.nombre ? r.nombre.replace('Regata de ','') : r.date}</text>
-  `).join('');
+  const xlbls = RACES.map((r,i)=>`
+    <text x="${xPos(i)}" y="${H-pB+14}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">Sem.${r.week}</text>
+    <text x="${xPos(i)}" y="${H-pB+25}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="#b0c8d4">${r.nombre.replace('Regata de ','')}</text>`).join('');
 
-  // trend note
   let note = '';
-  if(RACES.length >= 2) {
-    const last = RACES[RACES.length-1][metric];
-    const prev = RACES[RACES.length-2][metric];
-    const diff = last - prev;
-    const better = cfg.lowerBetter ? diff < 0 : diff > 0;
-    const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
-    const sign = diff > 0 ? '+' : '';
-    note = `${arrow} ${sign}${diff}${cfg.unit} respecto a la semana anterior · ${better ? '✅ mejora' : '⚠️ a trabajar'}`;
+  if(RACES.length>=2){
+    const last=RACES[RACES.length-1][metric], prev=RACES[RACES.length-2][metric];
+    const diff=last-prev, better=cfg.lowerBetter?diff<0:diff>0;
+    note = `${diff>0?'↑':diff<0?'↓':'→'} ${diff>0?'+':''}${diff}${cfg.unit} vs semana anterior · ${better?'✅ mejora':'⚠️ a trabajar'}`;
   }
-  document.getElementById('evol-note').textContent = note;
 
   document.getElementById('evol-chart').innerHTML = `
-    <svg width="100%" viewBox="0 0 ${W} ${H+10}">
-      <defs>
-        <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${cfg.color}" stop-opacity="0.15"/>
-          <stop offset="100%" stop-color="${cfg.color}" stop-opacity="0.01"/>
-        </linearGradient>
-      </defs>
-      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" stroke="#d0e4ec" stroke-width="0.5"/>
-      <line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="#d0e4ec" stroke-width="0.8"/>
+    <svg width="100%" viewBox="0 0 ${W} ${H+5}">
+      <defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${cfg.color}" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="${cfg.color}" stop-opacity="0.01"/>
+      </linearGradient></defs>
+      <line x1="${pL}" y1="${pT}" x2="${pL}" y2="${H-pB}" stroke="#d0e4ec" stroke-width="0.5"/>
+      <line x1="${pL}" y1="${H-pB}" x2="${W-pR}" y2="${H-pB}" stroke="#d0e4ec" stroke-width="0.8"/>
       <polygon points="${area}" fill="url(#eg)"/>
       <polyline points="${points}" fill="none" stroke="${cfg.color}" stroke-width="2.5" stroke-linejoin="round"/>
       ${dots}${xlbls}
-      <text x="${padL-6}" y="${padT+4}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">${maxV}${cfg.unit}</text>
-      <text x="${padL-6}" y="${H-padB+4}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">${minV}${cfg.unit}</text>
+      <text x="${pL-5}" y="${pT+5}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">${maxV}${cfg.unit}</text>
+      <text x="${pL-5}" y="${H-pB+4}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">${minV}${cfg.unit}</text>
     </svg>`;
+  document.getElementById('evol-note').textContent = note;
 }
 
-function renderCompTable() {
-  if(RACES.length < 2) return;
-  const r1 = RACES[0], r2 = RACES[1];
-  const rows = [
-    { label:'Posición', v1:`${r1.pos}.º/${r1.total}`, v2:`${r2.pos}.º/${r2.total}`, better: r2.pos <= r1.pos },
-    { label:'Tiempo oficial', v1:r1.tiempoOficial||'—', v2:r2.tiempoOficial||'—', better: null },
-    { label:'Diferencia con 1.º', v1:`${r1.difLider} s`, v2:`${r2.difLider} s`, better: r2.difLider < r1.difLider },
-    { label:'Distancia', v1:`${r1.distancia} m`, v2:`${r2.distancia} m`, better: null },
-    { label:'Cadencia media', v1:`${r1.cadMedia} p/m`, v2:`${r2.cadMedia} p/m`, better: r2.cadMedia >= r1.cadMedia },
-    { label:'Cadencia sprint', v1:`${r1.cadSprint} p/m`, v2:`${r2.cadSprint} p/m`, better: r2.cadSprint >= r1.cadSprint },
-    { label:'Ciaboga', v1:`${r1.ciabogaDur} s`, v2:`${r2.ciabogaDur} s`, better: r2.ciabogaDur < r1.ciabogaDur },
-    { label:'Reaceleración', v1:`${r1.reaceleracion} s`, v2:`${r2.reaceleracion} s`, better: r2.reaceleracion < r1.reaceleracion },
-    { label:'Tumba ida', v1:`${r1.tumbaIda}°`, v2:`${r2.tumbaIda}°`, better: r2.tumbaIda >= r1.tumbaIda },
-    { label:'Tumba sprint', v1:`${r1.tumbaSprint}°`, v2:`${r2.tumbaSprint}°`, better: r2.tumbaSprint > r1.tumbaSprint },
-    { label:'Vel/palada', v1:`${r1.velPalada} m`, v2:`${r2.velPalada} m`, better: r2.velPalada >= r1.velPalada },
-  ];
-  document.getElementById('comp-table-body').innerHTML = rows.map((row,i) => `
-    <tr style="border-bottom:1px solid var(--border);background:${i%2===0?'transparent':'rgba(26,107,138,0.02)'}">
-      <td style="padding:8px 10px;color:var(--text2);font-size:12px">${row.label}</td>
-      <td style="padding:8px 14px;text-align:center;font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">${row.v1}</td>
-      <td style="padding:8px 14px;text-align:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${row.better===null?'var(--text)':row.better?'#1d8a5e':'#d85a30'}">${row.v2}</td>
-      <td style="padding:8px 10px;text-align:center;font-size:14px">${row.better===null?'—':row.better?'✅':'⚠️'}</td>
-    </tr>`).join('');
-}
+function renderHistorico() {
+  // comp table
+  if(RACES.length>=2){
+    const r1=RACES[0],r2=RACES[1];
+    const rows=[
+      {label:'Posición',      v1:`${r1.pos}.º/${r1.total}`,     v2:`${r2.pos}.º/${r2.total}`,     better:r2.pos<=r1.pos},
+      {label:'Tiempo oficial',v1:r1.tiempoOficial,              v2:r2.tiempoOficial,              better:null},
+      {label:'Dif. con 1.º', v1:`${r1.difLider} s`,             v2:`${r2.difLider} s`,            better:r2.difLider<r1.difLider},
+      {label:'Cadencia media',v1:`${r1.cadMedia} p/m`,          v2:`${r2.cadMedia} p/m`,          better:r2.cadMedia>=r1.cadMedia},
+      {label:'Ciaboga',       v1:`${r1.ciabogaDur} s`,          v2:`${r2.ciabogaDur} s`,          better:r2.ciabogaDur<r1.ciabogaDur},
+      {label:'Reaceleración', v1:`${r1.reaceleracion} s`,       v2:`${r2.reaceleracion} s`,       better:r2.reaceleracion<r1.reaceleracion},
+      {label:'Tumba sprint',  v1:`${r1.tumbaSprint}°`,          v2:`${r2.tumbaSprint}°`,          better:r2.tumbaSprint>r1.tumbaSprint},
+      {label:'Vel/palada',    v1:`${r1.velPalada} m`,           v2:`${r2.velPalada} m`,           better:r2.velPalada>=r1.velPalada},
+    ];
+    document.getElementById('comp-table-body').innerHTML = rows.map((row,i)=>`
+      <tr style="border-bottom:1px solid var(--border);background:${i%2?'rgba(26,107,138,0.02)':'transparent'}">
+        <td style="padding:8px 10px;color:var(--text2);font-size:12px">${row.label}</td>
+        <td style="padding:8px 14px;text-align:center;font-family:'DM Mono',monospace;font-size:12px">${row.v1}</td>
+        <td style="padding:8px 14px;text-align:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${row.better===null?'var(--text)':row.better?'#1d8a5e':'#d85a30'}">${row.v2}</td>
+        <td style="padding:8px 10px;text-align:center;font-size:14px">${row.better===null?'—':row.better?'✅':'⚠️'}</td>
+      </tr>`).join('');
+  }
 
-function renderHist() {
-  const posIcons = {1:'🥇',2:'🥈',3:'🥉'};
-  const posColors = {1:'pos-1',2:'pos-2',3:'pos-3'};
-  const list = RACES.map((r,i)=>{
-    const prev = RACES[i-1];
-    const trend = !prev ? '—' : r.cadMedia > prev.cadMedia ? '↑' : r.cadMedia < prev.cadMedia ? '↓' : '→';
-    const trendCol = trend==='↑'?'color:#1D8A5E':trend==='↓'?'color:#D85A30':'color:var(--text3)';
-    const pIcon = posIcons[r.pos] || '';
-    const pCls  = posColors[r.pos] || 'pos-other';
+  // race list
+  const posIcons={1:'🥇',2:'🥈',3:'🥉'};
+  const posColors={1:'pos-1',2:'pos-2',3:'pos-3'};
+  document.getElementById('hist-list').innerHTML = RACES.map((r,i)=>{
+    const prev=RACES[i-1];
+    const trend=!prev?'—':r.cadMedia>prev.cadMedia?'↑':r.cadMedia<prev.cadMedia?'↓':'→';
+    const trendCol=trend==='↑'?'color:#1D8A5E':trend==='↓'?'color:#D85A30':'color:var(--text3)';
     return `<div class="week-row">
       <div class="week-num">Sem. ${r.week}</div>
-      <div class="week-date">${r.nombre || r.date}</div>
-      <div class="week-pos ${pCls}">${pIcon} ${r.pos}.º/${r.total}</div>
+      <div class="week-date">${r.nombre}</div>
+      <div class="week-pos ${posColors[r.pos]||'pos-other'}">${posIcons[r.pos]||''} ${r.pos}.º/${r.total}</div>
       <div class="week-cadencia">${r.cadMedia} p/m</div>
       <div class="week-trend" style="${trendCol}">${trend}</div>
     </div>`;
   }).join('');
-  document.getElementById('hist-list').innerHTML = list;
 
-  // Hitos
-  const last = RACES[RACES.length-1];
-  const HITOS = [
-    { label:'Reaceleración post-ciaboga', objetivo:'<15 s', val:last.reaceleracion, ok: last.reaceleracion <= 15 },
-    { label:'Tumba en sprint', objetivo:'>20°', val:`${last.tumbaSprint}°`, ok: last.tumbaSprint > 20 },
-    { label:'Cadencia media', objetivo:'≥29 p/m', val:last.cadMedia, ok: last.cadMedia >= 29 },
-    { label:'Diferencia con 1.º', objetivo:'<5 s', val:`${last.difLider} s`, ok: last.difLider < 5 },
-    { label:'Vel/palada', objetivo:'>7.2 m', val:`${last.velPalada} m`, ok: last.velPalada > 7.2 },
+  // hitos
+  const last=RACES[RACES.length-1];
+  const HITOS=[
+    {label:'Reaceleración post-ciaboga',objetivo:'≤15 s', val:`${last.reaceleracion} s`,ok:last.reaceleracion<=15},
+    {label:'Tumba en sprint',           objetivo:'>20°',  val:`${last.tumbaSprint}°`,  ok:last.tumbaSprint>20},
+    {label:'Cadencia media',            objetivo:'≥29 p/m',val:`${last.cadMedia} p/m`, ok:last.cadMedia>=29},
+    {label:'Diferencia con 1.º',        objetivo:'<5 s',  val:`${last.difLider} s`,   ok:last.difLider<5},
+    {label:'Vel/palada',                objetivo:'>7.2 m', val:`${last.velPalada} m`,  ok:last.velPalada>7.2},
   ];
   document.getElementById('hitos-list').innerHTML = HITOS.map(h=>`
     <div class="hito-row">
@@ -1405,29 +849,60 @@ function renderHist() {
       </div>
     </div>`).join('');
 
-  renderCompTable();
   buildEvolChart(currentMetric);
 }
 
-renderHist();
+// ── PANEL HISTORICO HTML ───────────────────────────────
+document.getElementById('panel-historico').innerHTML = `
+  <div class="card mb16">
+    <div class="sec-lbl">Comparativa directa · ${RACES.map(r=>r.nombre.replace('Regata de ','')).join(' vs ')}</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="border-bottom:2px solid var(--border)">
+          <th style="padding:8px 10px;text-align:left;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;font-weight:500">MÉTRICA</th>
+          ${RACES.map(r=>`<th style="padding:8px 14px;text-align:center;font-weight:700;font-size:12px;color:var(--sea)">${r.nombre.replace('Regata de '')}<br><span style="font-weight:400;font-size:10px;color:var(--text3)">${r.date}</span></th>`).join('')}
+          <th style="padding:8px 10px;text-align:center;font-size:11px;color:var(--text3);font-weight:500">Tendencia</th>
+        </tr></thead>
+        <tbody id="comp-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card mb16">
+    <div class="sec-lbl">Evolución semana a semana</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+      ${Object.entries(METRICS_CFG).map(([k,v],i)=>`<button class="msel ${i===0?'active':''}" onclick="selectMetric(this,'${k}')">${v.label}</button>`).join('')}
+    </div>
+    <div class="chart-area" id="evol-chart" style="min-height:150px"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:6px" id="evol-note"></p>
+  </div>
+  <div class="hist-card">
+    <div class="sec-lbl">Registro de regatas</div>
+    <div id="hist-list"></div>
+  </div>
+  <div class="card mt16">
+    <div class="sec-lbl">Hitos · estado actual</div>
+    <div id="hitos-list"></div>
+  </div>`;
 
-// ─── TAB SWITCHER ────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────
 function showPanel(name, btn) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   btn.classList.add('active');
-
-  if(name==='remeros') {
+  if(name==='remeros'){
     setTimeout(()=>{
       document.querySelectorAll('.score-fill').forEach(bar=>{
-        const w = bar.dataset.w;
-        bar.style.width = '0%';
-        requestAnimationFrame(()=>{ bar.style.width = w+'%'; });
+        const w=bar.dataset.w; bar.style.width='0%';
+        requestAnimationFrame(()=>{bar.style.width=w+'%'});
       });
-    }, 50);
+    },50);
   }
 }
+
+renderSelector();
+renderAll();
+renderHistorico();
 </script>
 </body>
 </html>
