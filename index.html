@@ -400,11 +400,30 @@
     min-height: 180px;
     display: flex; align-items: center; justify-content: center;
   }
-  .hist-empty-msg {
-    text-align:center; color:var(--text3);
-    font-size:13px; line-height:1.7;
+  .msel {
+    padding: 5px 13px; border-radius: 20px; border: 1px solid var(--border);
+    background: var(--white); color: var(--text2); font-size: 12px;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s;
   }
-  .hist-empty-msg .icon { font-size:36px; margin-bottom:12px; }
+  .msel:hover { border-color: var(--sea); color: var(--sea); }
+  .msel.active { background: var(--sea); color: white; border-color: var(--sea); }
+
+  .hito-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .hito-row:last-child { border-bottom: none; }
+  .hito-icon { font-size: 16px; flex-shrink: 0; }
+  .hito-label { flex: 1; color: var(--text2); }
+  .hito-vals { font-family: 'DM Mono', monospace; font-size: 12px; display: flex; gap: 8px; align-items: center; }
+  .hito-old { color: var(--text3); text-decoration: line-through; }
+  .hito-new { font-weight: 500; }
+  .hito-ok  { color: #1d8a5e; }
+  .hito-nog { color: #b07010; }
+  .hito-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
+  .badge-ok  { background: #e1f5ee; color: #0f6e56; }
+  .badge-prog{ background: #faeeda; color: #854f0b; }
+  .badge-new { background: var(--sea-pale); color: var(--sea); }
 
   /* ─── UTIL ─── */
   .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; }
@@ -424,15 +443,15 @@
 <header>
   <div>
     <div class="club-label">⚡ Panel de análisis · Jábega Málaga</div>
-    <h1>Regata <span>de Pedregalejo</span><br>30 Mayo 2026</h1>
+    <h1>Regata <span>de Huelin</span><br>6 Junio 2026</h1>
     <div class="header-meta">
-      <span>Tiempo real: <b>3 min 56 s</b></span>
-      <span>Participantes: <b>14 embarcaciones</b></span>
-      <span>Incluye ciaboga: <b>~25 s</b></span>
-      <span>Condiciones: <b>Calma total</b></span>
+      <span>Última regata: <b>3:31.82</b></span>
+      <span>Temporada: <b>2 regatas</b></span>
+      <span>Mejor resultado: <b>3.º / 12</b></span>
+      <span>Dif. con 1.º: <b>+1.39 s</b></span>
     </div>
   </div>
-  <div class="badge-3rd">🥉 3.º / 14</div>
+  <div class="badge-3rd">🥉 3.º · Huelin</div>
 </header>
 
 <nav class="nav-tabs">
@@ -943,60 +962,54 @@
 ══════════════════════════════════════════════ -->
 <div id="panel-historico" class="panel">
 
-  <div class="hist-card">
-    <div class="sec-lbl">Evolución de cadencia media · semana a semana</div>
-    <div class="hist-chart-area" id="hist-chart">
-      <div class="hist-empty-msg">
-        <div class="icon">📈</div>
-        <div>Aquí aparecerá la gráfica de evolución cuando se añadan más regatas.<br>
-        <span style="font-size:12px">De momento sólo hay una entrada registrada.</span></div>
-      </div>
+  <!-- Comparativa rápida las dos regatas -->
+  <div class="card mb16">
+    <div class="sec-lbl">Comparativa directa · Pedregalejo vs Huelin</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="padding:8px 10px;text-align:left;font-weight:500;color:var(--text3);font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.08em">MÉTRICA</th>
+            <th style="padding:8px 14px;text-align:center;color:#185FA5;font-weight:700;font-size:12px">Pedregalejo<br><span style="font-weight:400;font-size:10px;color:var(--text3)">30 Mayo</span></th>
+            <th style="padding:8px 14px;text-align:center;color:#1d8a5e;font-weight:700;font-size:12px">Huelin<br><span style="font-weight:400;font-size:10px;color:var(--text3)">6 Junio</span></th>
+            <th style="padding:8px 10px;text-align:center;font-weight:500;color:var(--text3);font-size:11px">Tendencia</th>
+          </tr>
+        </thead>
+        <tbody id="comp-table-body"></tbody>
+      </table>
     </div>
   </div>
 
+  <!-- Gráficas de evolución -->
+  <div class="card mb16">
+    <div class="sec-lbl">Evolución semana a semana</div>
+
+    <!-- Selector de métrica -->
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px" id="metric-selector">
+      <button class="msel active" data-metric="difLider" onclick="selectMetric(this,'difLider')">Diferencia con 1.º</button>
+      <button class="msel" data-metric="cadMedia" onclick="selectMetric(this,'cadMedia')">Cadencia media</button>
+      <button class="msel" data-metric="ciabogaDur" onclick="selectMetric(this,'ciabogaDur')">Ciaboga (s)</button>
+      <button class="msel" data-metric="reaceleracion" onclick="selectMetric(this,'reaceleracion')">Reaceleración (s)</button>
+      <button class="msel" data-metric="tumbaSprint" onclick="selectMetric(this,'tumbaSprint')">Tumba sprint (°)</button>
+      <button class="msel" data-metric="velPalada" onclick="selectMetric(this,'velPalada')">Vel/palada (m)</button>
+    </div>
+
+    <div class="chart-area" id="evol-chart" style="min-height:160px"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:6px" id="evol-note"></p>
+  </div>
+
+  <!-- Registro tabla -->
   <div class="hist-card">
     <div class="sec-lbl">Registro de regatas</div>
-    <div id="hist-list">
-      <!-- Populated by JS -->
-    </div>
-    <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);font-size:12px;color:var(--text3)">
-      Cada semana que se añada un nuevo análisis aparecerá aquí automáticamente con su posición, cadencia media, tiempo de ciaboga y tendencia respecto a la semana anterior.
-    </div>
+    <div id="hist-list"></div>
   </div>
 
-  <div class="grid2">
-    <div class="card">
-      <div class="sec-lbl">Métricas a comparar semana a semana</div>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text2)">
-        <div style="display:flex;gap:10px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#185FA5;flex-shrink:0"></span>Cadencia media general</div>
-        <div style="display:flex;gap:10px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#7b52a8;flex-shrink:0"></span>Duración ciaboga (segundos)</div>
-        <div style="display:flex;gap:10px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#0f7a8a;flex-shrink:0"></span>Tiempo de reaceleración post-ciaboga</div>
-        <div style="display:flex;gap:10px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#993C1D;flex-shrink:0"></span>Cadencia en sprint final</div>
-        <div style="display:flex;gap:10px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#1D8A5E;flex-shrink:0"></span>Posición clasificación</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="sec-lbl">Hitos a superar</div>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <span style="color:var(--text2)">Reaceleración post-ciaboga</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px"><span style="color:#D85A30">25 s</span> → <span style="color:#1D8A5E">&lt;15 s</span></span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <span style="color:var(--text2)">Cadencia media</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px"><span style="color:#D85A30">27</span> → <span style="color:#1D8A5E">≥29</span></span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <span style="color:var(--text2)">Retardo estribor</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px"><span style="color:#D85A30">0.5 s</span> → <span style="color:#1D8A5E">&lt;0.2 s</span></span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0">
-          <span style="color:var(--text2)">Clasificación objetivo</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px"><span style="color:#D85A30">3.º</span> → <span style="color:#1D8A5E">Top 2</span></span>
-        </div>
-      </div>
-    </div>
+  <!-- Hitos -->
+  <div class="card mt16">
+    <div class="sec-lbl">Hitos · estado actual</div>
+    <div id="hitos-list" style="display:flex;flex-direction:column;gap:0"></div>
   </div>
+
 </div>
 
 </div><!-- /app -->
@@ -1034,8 +1047,11 @@ const RACES = [
   {
     week: 1,
     date: '30 Mayo 2026',
+    nombre: 'Regata de Pedregalejo',
     pos: 3,
-    total: 14,
+    total: 12,
+    tiempoOficial: '3:49.56',
+    difLider: 8.28,
     distancia: 700,
     cadMedia: 27,
     cadMax: 34,
@@ -1045,9 +1061,28 @@ const RACES = [
     tumbaIda: 30,
     tumbaSprint: 12,
     velPalada: 7.0,
-    notes: 'Regata de Pedregalejo. Ciaboga limpia. Reaceleración mejorable. Tumba cae en sprint.',
+    notes: 'Ciaboga limpia. Reaceleración mejorable (25 s). Tumba cae en sprint (30°→12°).',
   },
-  // ← AÑADE AQUÍ LA SEMANA 2, 3, 4…
+  {
+    week: 2,
+    date: '6 Junio 2026',
+    nombre: 'Regata de Huelin',
+    pos: 3,
+    total: 12,
+    tiempoOficial: '3:31.82',
+    difLider: 1.39,
+    distancia: 680,
+    cadMedia: 28,
+    cadMax: 33,
+    cadSprint: 32,
+    ciabogaDur: 20,
+    reaceleracion: 15,
+    tumbaIda: 28,
+    tumbaSprint: 18,
+    velPalada: 7.1,
+    notes: 'Gran mejora vs líder (+1.4 s). Ciaboga más rápida (20 s). Reaceleración: objetivo cumplido (15 s). Tumba sprint mejorada (18°).',
+  },
+  // ← AÑADE AQUÍ LA SEMANA 3, 4…
 ];
 
 const ROWERS = [
@@ -1227,6 +1262,110 @@ function buildCard(r) {
 document.getElementById('rower-grid').innerHTML = ROWERS.map(buildCard).join('');
 
 // ─── RENDER HISTÓRICO ────────────────────────────────────
+const METRICS_CFG = {
+  difLider:      { label:'Diferencia con 1.º (s)', unit:'s',  color:'#993C1D', lowerBetter:true  },
+  cadMedia:      { label:'Cadencia media (pal/min)', unit:'',  color:'#1a6b8a', lowerBetter:false },
+  ciabogaDur:    { label:'Ciaboga (s)',             unit:'s',  color:'#7b52a8', lowerBetter:true  },
+  reaceleracion: { label:'Reaceleración (s)',        unit:'s',  color:'#0f7a8a', lowerBetter:true  },
+  tumbaSprint:   { label:'Tumba sprint (°)',         unit:'°',  color:'#e8a020', lowerBetter:false },
+  velPalada:     { label:'Vel/palada (m)',            unit:'m',  color:'#1d8a5e', lowerBetter:false },
+};
+
+let currentMetric = 'difLider';
+
+function selectMetric(btn, metric) {
+  currentMetric = metric;
+  document.querySelectorAll('.msel').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildEvolChart(metric);
+}
+
+function buildEvolChart(metric) {
+  const cfg = METRICS_CFG[metric];
+  const vals = RACES.map(r => r[metric]);
+  const maxV = Math.max(...vals);
+  const minV = Math.min(...vals);
+  const range = maxV - minV || 1;
+  const W = 600, H = 130, padL = 50, padR = 20, padT = 20, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const xStep = RACES.length > 1 ? plotW / (RACES.length - 1) : plotW / 2;
+
+  const yScale = v => padT + plotH - ((v - minV) / range) * plotH;
+  const xPos   = i => padL + (RACES.length > 1 ? i * xStep : plotW / 2);
+
+  const points = RACES.map((r,i) => `${xPos(i)},${yScale(r[metric])}`).join(' ');
+  const area   = `${xPos(0)},${H-padB} ${points} ${xPos(RACES.length-1)},${H-padB}`;
+
+  const dots = RACES.map((r,i) => {
+    const prev = RACES[i-1];
+    const improved = prev ? (cfg.lowerBetter ? r[metric] < prev[metric] : r[metric] > prev[metric]) : null;
+    const dotColor = improved === null ? cfg.color : improved ? '#1d8a5e' : '#d85a30';
+    return `<circle cx="${xPos(i)}" cy="${yScale(r[metric])}" r="5" fill="${dotColor}" stroke="white" stroke-width="1.5"/>
+            <text x="${xPos(i)}" y="${yScale(r[metric])-9}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="${dotColor}" font-weight="600">${r[metric]}${cfg.unit}</text>`;
+  }).join('');
+
+  const xlbls = RACES.map((r,i) => `
+    <text x="${xPos(i)}" y="${H-padB+14}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">Sem.${r.week}</text>
+    <text x="${xPos(i)}" y="${H-padB+24}" text-anchor="middle" font-family="'DM Sans',monospace" font-size="8" fill="#b0c8d4">${r.nombre ? r.nombre.replace('Regata de ','') : r.date}</text>
+  `).join('');
+
+  // trend note
+  let note = '';
+  if(RACES.length >= 2) {
+    const last = RACES[RACES.length-1][metric];
+    const prev = RACES[RACES.length-2][metric];
+    const diff = last - prev;
+    const better = cfg.lowerBetter ? diff < 0 : diff > 0;
+    const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
+    const sign = diff > 0 ? '+' : '';
+    note = `${arrow} ${sign}${diff}${cfg.unit} respecto a la semana anterior · ${better ? '✅ mejora' : '⚠️ a trabajar'}`;
+  }
+  document.getElementById('evol-note').textContent = note;
+
+  document.getElementById('evol-chart').innerHTML = `
+    <svg width="100%" viewBox="0 0 ${W} ${H+10}">
+      <defs>
+        <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${cfg.color}" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="${cfg.color}" stop-opacity="0.01"/>
+        </linearGradient>
+      </defs>
+      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" stroke="#d0e4ec" stroke-width="0.5"/>
+      <line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="#d0e4ec" stroke-width="0.8"/>
+      <polygon points="${area}" fill="url(#eg)"/>
+      <polyline points="${points}" fill="none" stroke="${cfg.color}" stroke-width="2.5" stroke-linejoin="round"/>
+      ${dots}${xlbls}
+      <text x="${padL-6}" y="${padT+4}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">${maxV}${cfg.unit}</text>
+      <text x="${padL-6}" y="${H-padB+4}" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">${minV}${cfg.unit}</text>
+    </svg>`;
+}
+
+function renderCompTable() {
+  if(RACES.length < 2) return;
+  const r1 = RACES[0], r2 = RACES[1];
+  const rows = [
+    { label:'Posición', v1:`${r1.pos}.º/${r1.total}`, v2:`${r2.pos}.º/${r2.total}`, better: r2.pos <= r1.pos },
+    { label:'Tiempo oficial', v1:r1.tiempoOficial||'—', v2:r2.tiempoOficial||'—', better: null },
+    { label:'Diferencia con 1.º', v1:`${r1.difLider} s`, v2:`${r2.difLider} s`, better: r2.difLider < r1.difLider },
+    { label:'Distancia', v1:`${r1.distancia} m`, v2:`${r2.distancia} m`, better: null },
+    { label:'Cadencia media', v1:`${r1.cadMedia} p/m`, v2:`${r2.cadMedia} p/m`, better: r2.cadMedia >= r1.cadMedia },
+    { label:'Cadencia sprint', v1:`${r1.cadSprint} p/m`, v2:`${r2.cadSprint} p/m`, better: r2.cadSprint >= r1.cadSprint },
+    { label:'Ciaboga', v1:`${r1.ciabogaDur} s`, v2:`${r2.ciabogaDur} s`, better: r2.ciabogaDur < r1.ciabogaDur },
+    { label:'Reaceleración', v1:`${r1.reaceleracion} s`, v2:`${r2.reaceleracion} s`, better: r2.reaceleracion < r1.reaceleracion },
+    { label:'Tumba ida', v1:`${r1.tumbaIda}°`, v2:`${r2.tumbaIda}°`, better: r2.tumbaIda >= r1.tumbaIda },
+    { label:'Tumba sprint', v1:`${r1.tumbaSprint}°`, v2:`${r2.tumbaSprint}°`, better: r2.tumbaSprint > r1.tumbaSprint },
+    { label:'Vel/palada', v1:`${r1.velPalada} m`, v2:`${r2.velPalada} m`, better: r2.velPalada >= r1.velPalada },
+  ];
+  document.getElementById('comp-table-body').innerHTML = rows.map((row,i) => `
+    <tr style="border-bottom:1px solid var(--border);background:${i%2===0?'transparent':'rgba(26,107,138,0.02)'}">
+      <td style="padding:8px 10px;color:var(--text2);font-size:12px">${row.label}</td>
+      <td style="padding:8px 14px;text-align:center;font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">${row.v1}</td>
+      <td style="padding:8px 14px;text-align:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${row.better===null?'var(--text)':row.better?'#1d8a5e':'#d85a30'}">${row.v2}</td>
+      <td style="padding:8px 10px;text-align:center;font-size:14px">${row.better===null?'—':row.better?'✅':'⚠️'}</td>
+    </tr>`).join('');
+}
+
 function renderHist() {
   const posIcons = {1:'🥇',2:'🥈',3:'🥉'};
   const posColors = {1:'pos-1',2:'pos-2',3:'pos-3'};
@@ -1238,7 +1377,7 @@ function renderHist() {
     const pCls  = posColors[r.pos] || 'pos-other';
     return `<div class="week-row">
       <div class="week-num">Sem. ${r.week}</div>
-      <div class="week-date">${r.date}</div>
+      <div class="week-date">${r.nombre || r.date}</div>
       <div class="week-pos ${pCls}">${pIcon} ${r.pos}.º/${r.total}</div>
       <div class="week-cadencia">${r.cadMedia} p/m</div>
       <div class="week-trend" style="${trendCol}">${trend}</div>
@@ -1246,38 +1385,28 @@ function renderHist() {
   }).join('');
   document.getElementById('hist-list').innerHTML = list;
 
-  if(RACES.length < 2) {
-    document.getElementById('hist-chart').innerHTML = `<div class="hist-empty-msg">
-      <div class="icon">📈</div>
-      <div>La gráfica de evolución aparecerá cuando haya al menos 2 regatas registradas.<br>
-      <span style="font-size:12px">Añade la próxima semana y aquí se verá la progresión.</span></div>
-    </div>`;
-  } else {
-    buildHistChart();
-  }
-}
+  // Hitos
+  const last = RACES[RACES.length-1];
+  const HITOS = [
+    { label:'Reaceleración post-ciaboga', objetivo:'<15 s', val:last.reaceleracion, ok: last.reaceleracion <= 15 },
+    { label:'Tumba en sprint', objetivo:'>20°', val:`${last.tumbaSprint}°`, ok: last.tumbaSprint > 20 },
+    { label:'Cadencia media', objetivo:'≥29 p/m', val:last.cadMedia, ok: last.cadMedia >= 29 },
+    { label:'Diferencia con 1.º', objetivo:'<5 s', val:`${last.difLider} s`, ok: last.difLider < 5 },
+    { label:'Vel/palada', objetivo:'>7.2 m', val:`${last.velPalada} m`, ok: last.velPalada > 7.2 },
+  ];
+  document.getElementById('hitos-list').innerHTML = HITOS.map(h=>`
+    <div class="hito-row">
+      <div class="hito-icon">${h.ok?'✅':'🎯'}</div>
+      <div class="hito-label">${h.label}</div>
+      <div class="hito-vals">
+        <span class="${h.ok?'hito-ok':'hito-nog'}">${h.val}</span>
+        <span style="color:var(--text3);font-size:10px">obj: ${h.objetivo}</span>
+        <span class="hito-badge ${h.ok?'badge-ok':'badge-prog'}">${h.ok?'Conseguido':'En progreso'}</span>
+      </div>
+    </div>`).join('');
 
-function buildHistChart() {
-  const maxC = Math.max(...RACES.map(r=>r.cadMedia)) + 3;
-  const minC = Math.min(...RACES.map(r=>r.cadMedia)) - 3;
-  const w = 600, h = 120, pad = 40;
-  const xStep = (w - pad*2) / (RACES.length - 1 || 1);
-  const yScale = v => h - pad/2 - ((v - minC) / (maxC - minC)) * (h - pad);
-  const points = RACES.map((r,i) => `${pad + i*xStep},${yScale(r.cadMedia)}`).join(' ');
-  const areaPoints = `${pad},${h} ` + RACES.map((r,i) => `${pad+i*xStep},${yScale(r.cadMedia)}`).join(' ') + ` ${pad+(RACES.length-1)*xStep},${h}`;
-  const dots = RACES.map((r,i) => `<circle cx="${pad+i*xStep}" cy="${yScale(r.cadMedia)}" r="4" fill="#1a6b8a" stroke="white" stroke-width="1.5"/>`).join('');
-  const xlbls = RACES.map((r,i) => `<text x="${pad+i*xStep}" y="${h+8}" text-anchor="middle" font-size="9" font-family="'DM Mono',monospace" fill="#8aabb8">Sem ${r.week}</text>`).join('');
-
-  document.getElementById('hist-chart').innerHTML = `
-    <svg width="100%" viewBox="0 0 ${w} ${h+20}">
-      <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#1a6b8a" stop-opacity="0.2"/>
-        <stop offset="100%" stop-color="#1a6b8a" stop-opacity="0.01"/>
-      </linearGradient></defs>
-      <polygon points="${areaPoints}" fill="url(#hg)"/>
-      <polyline points="${points}" fill="none" stroke="#1a6b8a" stroke-width="2" stroke-linejoin="round"/>
-      ${dots}${xlbls}
-    </svg>`;
+  renderCompTable();
+  buildEvolChart(currentMetric);
 }
 
 renderHist();
