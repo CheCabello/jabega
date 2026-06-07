@@ -764,7 +764,7 @@ function buildEvolChart(metric) {
 
   const xlbls = RACES.map((r,i)=>`
     <text x="${xPos(i)}" y="${H-pB+14}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8aabb8">Sem.${r.week}</text>
-    <text x="${xPos(i)}" y="${H-pB+25}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="#b0c8d4">${r.nombre.replace('Regata de ','')}</text>`).join('');
+    <text x="${xPos(i)}" y="${H-pB+25}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="#b0c8d4">${r.nombre.split('Regata de ')[1]||r.nombre}</text>`).join('');
 
   let note = '';
   if(RACES.length>=2){
@@ -855,12 +855,12 @@ function renderHistorico() {
 // ── PANEL HISTORICO HTML ───────────────────────────────
 document.getElementById('panel-historico').innerHTML = `
   <div class="card mb16">
-    <div class="sec-lbl">Comparativa directa · ${RACES.map(r=>r.nombre.replace('Regata de ','')).join(' vs ')}</div>
+    <div class="sec-lbl">Comparativa directa · ${RACES.map(r=>r.nombre.split('Regata de ')[1]||r.nombre).join(' vs ')}</div>
     <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead><tr style="border-bottom:2px solid var(--border)">
           <th style="padding:8px 10px;text-align:left;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;font-weight:500">MÉTRICA</th>
-          ${RACES.map(r=>`<th style="padding:8px 14px;text-align:center;font-weight:700;font-size:12px;color:var(--sea)">${r.nombre.replace('Regata de '')}<br><span style="font-weight:400;font-size:10px;color:var(--text3)">${r.date}</span></th>`).join('')}
+          ${RACES.map(r=>`<th style="padding:8px 14px;text-align:center;font-weight:700;font-size:12px;color:var(--sea)">${r.nombre.substring(r.nombre.indexOf(' de ')+4)}<br><span style="font-weight:400;font-size:10px;color:var(--text3)">${r.date}</span></th>`).join('')}
           <th style="padding:8px 10px;text-align:center;font-size:11px;color:var(--text3);font-weight:500">Tendencia</th>
         </tr></thead>
         <tbody id="comp-table-body"></tbody>
